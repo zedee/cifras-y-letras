@@ -9,7 +9,10 @@
 <body>
     <div id="game-container">
         <header>
-            <h1>Cifras y Letras</h1>
+            <div>
+                <h1>Cifras y Letras</h1>
+                <button id="start-game-btn">Empezar / Reiniciar</button>
+            </div>
             <div class="stats">
                 <div class="stat-box">
                     <span class="label">Puntos</span>
@@ -33,18 +36,20 @@
             </div>
 
             <div id="game-display">
-                <!-- Numbers or Letters will appear here -->
                 <div id="content-area"></div>
             </div>
 
             <div class="controls">
-                <input type="text" id="user-input" placeholder="Tu respuesta aquí..." disabled>
-                <button id="action-btn">Empezar</button>
+                <div class="input-group">
+                    <input type="text" id="user-input" placeholder="Tu respuesta..." disabled>
+                    <div id="input-hint" class="hint"></div>
+                </div>
+                <button id="action-btn" disabled>Enviar</button>
             </div>
         </main>
 
-        <footer>
-            <p>Cifras y Letras - Solo Mode Engine</p>
+        <footer style="margin-top: 2rem; font-size: 0.7rem; color: #999;">
+            Cifras y Letras - Solo Mode Engine
         </footer>
     </div>
 
