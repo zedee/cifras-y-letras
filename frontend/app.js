@@ -54,12 +54,18 @@ async function fetchScore() {
 }
 
 async function startGame() {
-    // Reset State
-    roundDescriptionEl.innerText = "Presiona 'Empezar' para comenzar.";
-    state.currentRound = 1;
-    state.timer = 40;
+    // Only initialize Round 1 if we are starting fresh (currentRound is 0)
+    if (state.currentRound === 0) {
+        state.currentRound = 1;
+        state.timer = 40;
+        state.isPaused = false; 
+        // Note: We don't reset the timer to 40 if we are continuing from a previous round
+        // unless you want the timer to reset every round. 
+        // If you want a fresh timer every round, move state.timer = 40 here.
+    }
+
+    roundDescriptionEl.innerText = "Cargando...";
     state.isLoading = true;
-    state.isPaused = false; // Reset pause state
     state.currentData = null; 
     
     actionBtn.disabled = true;
@@ -69,7 +75,7 @@ async function startGame() {
     // Start Timer
     clearInterval(state.timerInterval);
     state.timerInterval = setInterval(() => {
-        if (!state.isPaused) { // Only decrement if not paused
+        if (!state.isPaused) {
             state.timer--;
             updateUI();
             if (state.timer <= 0) {
