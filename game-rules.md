@@ -16,6 +16,7 @@ In this game show, two contestants must make it through a certain number of roun
 - In this round, one contestant is asked how many vowels they would like to be used in a selection of 10 randomly generated letters, each chosen unseen from all possible vowels or consonants. The same letter may appear more than once. The game originally used seven letters, increasing with time to eight and then nine; the 10-letter rule was instituted on 4 April 2010. Contestants previously selected letters by calling for one vowel or consonant at a time.
 - Once the letters are selected, the contestants are given 30 seconds to form the longest word possible, using each letter no more times than it appears. The contestant who forms the longer valid word scores one point per letter used; if both contestants find the same word or words of equal length, each one scores. Diacritics are not shown on the letters, but may be added as needed: for instance, the Spanish word caminar (to walk) can be formed with the tiles C A M I N A R.
 - Only single words are admitted. No spaces, no hyphens.
+- Plural and singular form, genre (masculine, femenine and neutral) as well as and verb conjugations are accepted as valid words.
 - Minimum word length is of 4 words.
 
 ## The duel
