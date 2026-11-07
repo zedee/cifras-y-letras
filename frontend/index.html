@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cifras y Letras - Solo Mode</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <header>
+            <h1>Cifras y Letras</h1>
+            <div class="stats">
+                <div class="stat-box">
+                    <span class="label">Puntos</span>
+                    <span id="score">0</span>
+                </div>
+                <div class="stat-box">
+                    <span class="label">Power Points</span>
+                    <span id="power-points">0</span>
+                </div>
+                <div class="stat-box">
+                    <span class="label">Tiempo</span>
+                    <span id="timer">00:00</span>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div id="round-info">
+                <h2 id="round-title">Preparando juego...</h2>
+                <p id="round-description">Presiona "Empezar" para comenzar.</p>
+            </div>
+
+            <div id="game-display">
+                <!-- Numbers or Letters will appear here -->
+                <div id="content-area"></div>
+            </div>
+
+            <div class="controls">
+                <input type="text" id="user-input" placeholder="Tu respuesta aquí..." disabled>
+                <button id="action-btn">Empezar</button>
+            </div>
+        </main>
+
+        <footer>
+            <p>Cifras y Letras - Solo Mode Engine</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
