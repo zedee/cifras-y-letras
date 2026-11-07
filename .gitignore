@@ -2,6 +2,8 @@
 .vscode/
 .history/
 *.code-workspace
+
+# --- Other temporary files --
 *.db
 agent-handover.md
 
