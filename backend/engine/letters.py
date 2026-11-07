@@ -30,10 +30,11 @@ class LetterEngine:
         Finds the longest valid word from the dictionary that can be 
         formed using the available letters.
         """
-        # Count available letters: e.g., {'A': 2, 'B': 1...}
+        # Count available letters (ensure keys are uppercase for consistency)
         letter_pool = {}
         for char in available_letters:
-            letter_pool[char] = letter_pool.get(char, 0) + 1
+            upper_char = char.upper()
+            letter_pool[upper_char] = letter_pool.get(upper_char, 0) + 1
 
         longest_word = None
         max_length = 0
@@ -42,29 +43,21 @@ class LetterEngine:
         cursor = conn.cursor()
 
         # We fetch words from the DB. 
-        # Note: In a real production environment with a huge DB, 
-        # we'd want to optimize this query or use a Trie structure.
         cursor.execute("SELECT word FROM words")
         rows = cursor.fetchall()
         conn.close()
 
         for (word,) in rows:
-            # Normalize word for comparison (remove accents/lowercase)
-            # For now, we'll do a simple check.
             word_clean = word.lower()
-            
-            # Check if word can be formed
-            word_letter_count = {}
             possible = True
+            current_word_counts = {}
             
             for char in word_clean:
-                if char in letter_pool:
-                    word_letter_count[char] = word_letter_count.get(char, 0) + 1
-                    if word_letter_count[char] > letter_pool.get(char.upper(), 0):
-                        possible = False
-                        break
-                else:
-                    # Handle cases where the word has letters not in our 10-letter set
+                upper_char = char.upper()
+                current_word_counts[upper_char] = current_word_counts.get(upper_char, 0) + 1
+                
+                # Check if we've exceeded the available count for this letter
+                if current_word_counts[upper_char] > letter_pool.get(upper_char, 0):
                     possible = False
                     break
             
@@ -74,18 +67,3 @@ class LetterEngine:
                     longest_word = word
         
         return longest_word, max_length
-
-# Example Usage for testing:
-if __name__ == "__main__":
-    engine = LetterEngine()
-    
-    # Test 1: Generate letters
-    v_count = 3
-    letters = engine.generate_letters(v_count)
-    print(f"Generated Letters: {letters}")
-    
-    # Test 2: Find longest word
-    # Let's mock some letters that should form "CASA"
-    mock_letters = list("CASAR") 
-    word, length = engine.find_longest_word(mock_letters)
-    print(f"Longest word for {mock_letters}: {word} (Length: {length})")

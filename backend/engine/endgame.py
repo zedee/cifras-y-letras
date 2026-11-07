@@ -78,24 +78,3 @@ class EndgameEngine:
             })
 
         return selections
-
-# Example Usage for testing:
-if __name__ == "__main__":
-    engine = EndgameEngine()
-    
-    # Example Topic: Astronomical Terms
-    topic = ["planetas", "asteroides", "galaxia", "cometa", "nebulosa", 
-              "exoplaneta", "constelacion", "supernova", "pulsar", "quasar"]
-    
-    try:
-        rounds = engine.generate_endgame_round(topic)
-        for i, r in enumerate(rounds):
-            print(f"Selection {i+1}: {r['selection']} (Target: {r['target_word']})")
-            
-        # Test validation
-        test_selection = "planetasxyzab" # "planetas" is 8 letters
-        is_valid = engine.validate_endgame_word(test_selection, "planetas")
-        print(f"\nIs 'planetas' valid for '{test_selection}'? {is_valid}")
-        
-    except Exception as e:
-        print(f"Error: {e}")

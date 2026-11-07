@@ -55,25 +55,3 @@ class ScoreManager:
             "main_score": self.score,
             "power_points": self.power_points
         }
-
-# Example Usage for testing:
-if __name__ == "__main__":
-    sm = ScoreManager()
-    print(f"Initial Score: {sm.get_current_scores()}")
-    
-    # Simulate Number Round (Exact)
-    sm.add_number_round_score(is_exact=True, is_best_approx=False)
-    print(f"After Number Round (Exact): {sm.get_current_scores()}")
-    
-    # Simulate Letter Round (Word length 8)
-    sm.add_letter_round_score(word_length=8)
-    print(f"After Letter Round (8 letters): {sm.get_current_scores()}")
-    
-    # Simulate Duel (Correct)
-    sm.add_duel_score(is_correct=True)
-    print(f"After Duel Round (Correct): {sm.get_current_scores()}")
-    
-    # Simulate Endgame (Correct)
-    sm.reset_for_endgame()
-    sm.add_endgame_score(is_correct=True)
-    print(f"Endgame Power Points: {sm.get_current_scores()}")

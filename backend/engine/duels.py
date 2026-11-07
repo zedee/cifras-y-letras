@@ -81,11 +81,3 @@ class DuelEngine:
             return False
 
         return True
-
-# Example Usage for testing:
-if __name__ == "__main__":
-    duel = DuelEngine()
-    print("Testing Spelling:", duel.check_correct_spelling("casa", "casa"))
-    seq = "((((889 - 662) + 697) / 7) * 6) / 4"
-    print("Testing Mental Arithmetic (198):", duel.check_mental_arithmetic(seq, 198))
-    print("Testing One within the other:", duel.check_one_within_the_other("testamento", "amen"))

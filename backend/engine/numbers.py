@@ -76,15 +76,3 @@ class NumberEngine:
         if result > 0:
             new_numbers = remaining + [result]
             backtrack_func(new_numbers, path + [step_str])
-
-# Example Usage for testing:
-if __name__ == "__main__":
-    engine = NumberEngine()
-    nums = engine.generate_numbers()
-    target = random.randint(101, 999)
-    print(f"Numbers: {nums}")
-    print(f"Target: {target}")
-    
-    val, path = engine.solve(nums, target)
-    print(f"Best Value: {val}")
-    print(f"Path: {' '.join(path)}")
