@@ -1,14 +1,14 @@
 # Cifras y Letras
 Una app web para ponerte a prueba y jugar tu misma a los juegos de palabras y números de la misma manera que se hace en el concurso de televisión de RTVE "Cifras y Letras". Lo bueno, que puedes probar tantas veces como quieras. Lo malo, que no aparecen los maravillosos Aitor Albizua, ni David Calle ni Elena Herraiz, y dudo que acepten de ninguna manera tener sus "clones digitales" en este repo.
 
-## Disclaimer / Descargo de responsabilidad
-**English:**
-This repository and the name "Cifras y Letras" are not affiliated with, sponsored by, or endorsed by the television program or any company associated with the same name. This is an independent project created for personal and experimental purposes and is not intended to replace, mimic, or represent the official brand.
-
-**Español:**
-Este repositorio y el nombre "Cifras y Letras" no están afiliados, patrocinados ni respaldados por el programa de televisión o cualquier empresa asociada con el mismo nombre. Este es un proyecto independiente creado con fines personales y experimentales, y no pretende sustituir, imitar ni representar la marca oficial.
+## Índice
+1. [Preámbulo](#preambulo)
+2. [Prerrequisitos](#prerrequisitos)
+3. [Descargo de responsabilidad](#disclaimer--descargo-de-responsabilidad)
 
 ## Preámbulo
+Lectura totalmente **opcional**, puedes ir directo a los [Prerrequisitos](#prerrequisitos)
+
 Este proyecto empieza un fin de semana de noviembre, en el que después de unos meses de ir experimentando
 y probando interacciones con diferentes modelos de lenguaje en un sistema con hardware bastante _limitado_ (16GB VRAM), he querido hacer una prueba más práctica de las capacidades reales de estas herramientas sin tener que gastarse (o invertir) 6000 pavazos en un RTX Spark ni depender de un contaminante y poco sostenible _datacenter_ (los agentes usados han corrido 100% en local).
 
@@ -25,3 +25,13 @@ Este preámbulo me sirve también como dosis de humildad para mi mismo, -inicial
 También escribo este preámbulo (y lo pongo deliberadamente al principio del README), con la intención de dejar por escrito mi "autodefensa" de la mala fama que tiene el "vibecoding". Si bien es cierto que la parte "dura" del proceso, -que es picar el código-, no ha salido de la punta de mis dedos, sí que me he encargado de tunear la IA de acuerdo con mi hardware, probar decenas de otros modelos, diseñar el proyecto inicial, plantear la arquitectura, leer (y entender) el código generado, avanzar iteración tras interación con el "Agentic Loop" y obviamente realizar tareas divertidas como corregir bugs, y no tan divertidas (según se mire), como el QA. Al fin y al cabo, por A o por B, currar, se sigue currando. No es darle a un botón y que todo se haga de manera mágica. Si fuera así, perdería la gracia. Además, lo hago por hobby y pura diversión y no tengo que rendir cuentas a nadie.
 
 En conclusión, no voy a profundizar ni a filosofar más en este humilde README. Dicho esto y que ya he podido dar mi opinión de manera abierta sobre el tema, vamos a detallar las instrucciones del repositorio.
+
+## Prerrequisitos
+TBD
+
+## Disclaimer / Descargo de responsabilidad
+**English:**
+This repository and the name "Cifras y Letras" are not affiliated with, sponsored by, or endorsed by the television program or any company associated with the same name. This is an independent project created for personal and experimental purposes and is not intended to replace, mimic, or represent the official brand.
+
+**Español:**
+Este repositorio y el nombre "Cifras y Letras" no están afiliados, patrocinados ni respaldados por el programa de televisión o cualquier empresa asociada con el mismo nombre. Este es un proyecto independiente creado con fines personales y experimentales, y no pretende sustituir, imitar ni representar la marca oficial.
