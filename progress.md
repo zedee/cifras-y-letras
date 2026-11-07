@@ -2,14 +2,15 @@
 
 ## Phase 1: Foundation & Data
 - [ ] **Milestone 1: Project Infrastructure**
-    - [ ] Set up project structure.
-    - [ ] Configure Dockerfile and docker-compose.yml.
-    - [ ] Establish basic API structure (FastAPI/Flask).
+    - [x] Set up project structure.
+    - [x] Initialize virtual environment (venv).
+    - [x] Configure Dockerfile and docker-compose.yml.
+    - [x] Establish basic API structure (FastAPI/Flask).
 - [ ] **Milestone 2: The Dictionary Engine**
-    - [ ] Parse `data/diccionario_es.txt`.
-    - [ ] Implement SQLite database for word storage.
-    - [ ] Handle "comma" logic (e.g., "cinemático, ca").
-    - [ ] Implement search logic (checking validity based on letters).
+    - [x] Parse `data/diccionario_es.txt`.
+    - [x] Implement SQLite database for word storage.
+    - [x] Handle "comma" logic (e.g., "cinemático, ca").
+    - [x] Implement search logic (checking validity based on letters).
 
 ## Phase 2: Sub-Engines (Game Logic)
 - [ ] **Milestone 3: Number Round Engine**
