@@ -45,6 +45,7 @@ def get_score():
 def start_numbers():
     numbers = num_engine.generate_numbers()
     target = random.randint(101, 999)
+    # Re-enabled solve with the optimized engine
     best_val, best_path = num_engine.solve(numbers, target)
     return {
         "numbers": numbers,

@@ -9,6 +9,7 @@ class NumberEngine:
         ] + [
             (25, 5), (50, 3), (75, 2), (100, 1)
         ]
+        self._memo = {}
 
     def generate_numbers(self) -> List[int]:
         """Generates 6 numbers based on the weighted distribution."""
@@ -23,17 +24,21 @@ class NumberEngine:
 
     def solve(self, numbers: List[int], target: int) -> Tuple[int, List[str]]:
         """
-        Finds the best calculation to reach the target.
+        Finds the best calculation to reach the target with memoization.
         Returns: (best_value, list_of_steps)
         """
+        self._memo = {} # Clear memo for each new solve
         best_val = -1
         best_path = []
         
-        # We use a recursive search to find all possible valid combinations
-        # The state is a list of current available numbers
         def backtrack(current_numbers: List[int], path: List[str]):
             nonlocal best_val, best_path
             
+            # Sort numbers to create a consistent key for memoization
+            state_key = tuple(sorted(current_numbers))
+            if state_key in self._memo:
+                return self._memo[state_key]
+
             # Base case: if only one number left, check against target
             if len(current_numbers) == 1:
                 val = current_numbers[0]
@@ -66,7 +71,9 @@ class NumberEngine:
                     if b != 0 and a % b == 0:
                         self._try_op(a // b, f"({a} / {b})", remaining, path, backtrack)
 
-        # Initial call
+            self._memo[state_key] = (best_val, best_path)
+            return best_val, best_path
+
         backtrack(numbers, [])
         return best_val, best_path
 

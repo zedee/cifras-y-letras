@@ -38,6 +38,17 @@
 
             <div id="game-display">
                 <div id="content-area"></div>
+                <!-- New containers for the interactive Number Round -->
+                <div id="number-interaction-ui" style="display: none;">
+                    <div id="operator-selector" class="operator-group">
+                        <button class="op-btn" data-op="+">+</button>
+                        <button class="op-btn" data-op="-">-</button>
+                        <button class="op-btn" data-op="*">×</button>
+                        <button class="op-btn" data-op="/">÷</button>
+                    </div>
+                    <button id="add-calc-btn">ADD</button>
+                    <div id="calc-history"></div>
+                </div>
             </div>
 
             <div class="controls">
@@ -52,6 +63,7 @@
         <footer style="margin-top: 2rem; font-size: 0.7rem; color: #999;">
             Cifras y Letras - Solo Mode Engine
         </footer>
+
     </div>
 
     <script src="app.js"></script>
