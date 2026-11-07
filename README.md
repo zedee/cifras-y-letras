@@ -28,7 +28,7 @@ También escribo este preámbulo (y lo pongo deliberadamente al principio del RE
 En conclusión, no voy a profundizar ni a filosofar más en este humilde README. Dicho esto y que ya he podido dar mi opinión de manera abierta sobre el tema, vamos a detallar las instrucciones del repositorio.
 
 ## Prerrequisitos
-Python 3.10+ y venv. (Añadir más info aquí luego).
+Python 3.10+ y venv.
 
 ## Instalación y uso
 - Clonar el repo (sin este primer paso, mal):
