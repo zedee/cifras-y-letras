@@ -154,3 +154,23 @@ footer {
     font-size: 0.7rem;
     color: #999;
 }
+
+/* --- Pause State --- */
+#game-container.paused {
+    filter: grayscale(0.5) brightness(0.8);
+    pointer-events: none; 
+}
+
+#pause-btn {
+    background-color: #ffc107;
+    color: #000;
+    font-weight: bold;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    border: 1px solid #d4a017;
+    pointer-events: auto; /* Keep clickable while container is paused */
+}
+
+#pause-btn:hover {
+    background-color: #e0a800;
+}

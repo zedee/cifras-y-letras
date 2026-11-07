@@ -8,7 +8,8 @@ const state = {
     timer: 0,
     timerInterval: null,
     isLoading: false,
-    currentData: null // Added to store the current round's data
+    isPaused: false, // Pause feature
+    currentData: null // Stores the current round's data (numbers, target, best_val, letters, etc.)
 };
 
 // DOM Elements
@@ -22,11 +23,24 @@ const userInputEl = document.getElementById('user-input');
 const inputHintEl = document.getElementById('input-hint');
 const actionBtn = document.getElementById('action-btn');
 const startBtn = document.getElementById('start-game-btn');
+const pauseBtn = document.getElementById('pause-btn');
 
 function updateUI() {
     scoreEl.innerText = state.score;
     powerPointsEl.innerText = state.powerPoints;
-    timerEl.innerText = `00:${state.timer.toString().padStart(2, '0')}`;
+    // Format timer as MM:SS
+    const minutes = Math.floor(state.timer / 60);
+    const seconds = state.timer % 60;
+    timerEl.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
+    // Toggle the paused class on the container
+    if (state.isPaused) {
+        document.getElementById('game-container').classList.add('paused');
+        pauseBtn.innerText = "Reanudar";
+    } else {
+        document.getElementById('game-container').classList.remove('paused');
+        pauseBtn.innerText = "Pausa";
+    }
 }
 
 async function fetchScore() {
@@ -45,20 +59,25 @@ async function startGame() {
     state.currentRound = 1;
     state.timer = 40;
     state.isLoading = true;
-    state.currentData = null; // Clear previous data
+    state.isPaused = false; // Reset pause state
+    state.currentData = null; 
     
     actionBtn.disabled = true;
-    contentAreaEl.innerHTML = `<div class="loading-spinner">Calculando primera ronda...</div>`;
+    userInputEl.disabled = true;
+    contentAreaEl.innerHTML = `<div class="loading-spinner">Calculando ronda...</div>`;
     
     // Start Timer
     clearInterval(state.timerInterval);
     state.timerInterval = setInterval(() => {
-        state.timer--;
-        updateUI();
-        if (state.timer <= 0) {
-            clearInterval(state.timerInterval);
-            alert("¡Tiempo agotado!");
-            actionBtn.disabled = false;
+        if (!state.isPaused) { // Only decrement if not paused
+            state.timer--;
+            updateUI();
+            if (state.timer <= 0) {
+                clearInterval(state.timerInterval);
+                alert("¡Tiempo agotado!");
+                actionBtn.disabled = false;
+                userInputEl.disabled = false;
+            }
         }
     }, 1000);
 
@@ -68,18 +87,18 @@ async function startGame() {
             const response = await fetch(`${API_BASE}/start-numbers`);
             const data = await response.json();
             
-            // FIX: Save data so submitAnswer can use it
             state.currentData = data;
             
-            roundTitleEl.innerText = "Round " + state.currentRound + ": Números";
+            roundTitleEl.innerText = "Ronda " + state.currentRound + ": Números";
             roundDescriptionEl.innerText = "Logra el número objetivo con las cifras dadas.";
-            inputHintEl.innerText = "Introduce el resultado final (ej: 150)";
+            inputHintEl.innerText = "Introduce el número más cercano posible al objetivo.";
             
             contentAreaEl.innerHTML = `
-                <div style="font-size: 2rem; margin-bottom: 1rem;">${data.numbers.join(' | ')}</div>
-                <div style="color: #007bff;">Objetivo: ${data.target}</div>
-                <div style="font-size: 0.8rem; margin-top: 1rem; color: #666;">
-                    Mejor posible: ${data.best_val} (${data.best_path.join(' ')})
+                <div style="font-size: 2.5rem; margin-bottom: 1rem; color: #333;">${data.numbers.join(' | ')}</div>
+                <div style="font-size: 1.5rem; color: #007bff; margin-bottom: 1rem;">Objetivo: ${data.target}</div>
+                <div style="font-size: 0.9rem; color: #666; background: #eee; padding: 10px; border-radius: 5px;">
+                    Mejor posible: ${data.best_val} <br>
+                    <small>(${data.best_path.join(' + ')})</small>
                 </div>
             `;
         } else {
@@ -87,14 +106,15 @@ async function startGame() {
             const response = await fetch(`${API_BASE}/start-letters?vowel_count=3`);
             const data = await response.json();
             
-            // FIX: Save letters so submitAnswer can use them
             state.currentData = data;
             
-            roundTitleEl.innerText = "Round " + state.currentRound + ": Letras";
+            roundTitleEl.innerText = "Ronda " + state.currentRound + ": Letras";
             roundDescriptionEl.innerText = "Forma la palabra más larga con estas letras.";
             inputHintEl.innerText = "Escribe la palabra más larga que puedas formar.";
             
             contentAreaEl.innerText = data.letters.join(' ');
+            contentAreaEl.style.fontSize = "2.5rem";
+            contentAreaEl.style.color = "#333";
         }
     } catch (e) {
         contentAreaEl.innerText = "Error al cargar la ronda. Reintenta.";
@@ -108,7 +128,10 @@ async function startGame() {
 
 async function submitAnswer() {
     const userValue = userInputEl.value.trim();
-    if (!userValue) return;
+    if (!userValue) {
+        alert("Por favor, introduce una respuesta.");
+        return;
+    }
 
     actionBtn.disabled = true;
     contentAreaEl.innerHTML = `<div class="loading-spinner">Enviando respuesta...</div>`;
@@ -121,6 +144,7 @@ async function submitAnswer() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     user_value: parseInt(userValue),
+                    target: state.currentData?.target,
                     best_val: state.currentData?.best_val 
                 })
             });
@@ -149,7 +173,7 @@ async function submitAnswer() {
             alert("¡Juego Terminado!");
             location.reload();
         } else {
-            roundTitleEl.innerText = "Round " + state.currentRound;
+            roundTitleEl.innerText = "Ronda " + state.currentRound;
             contentAreaEl.innerText = "Cargando siguiente ronda...";
             setTimeout(() => {
                 startGame(); 
@@ -158,7 +182,6 @@ async function submitAnswer() {
     } catch (e) {
         console.error(e);
         contentAreaEl.innerText = "Error al enviar respuesta.";
-    } finally {
         actionBtn.disabled = false;
     }
 }
@@ -166,6 +189,10 @@ async function submitAnswer() {
 // Event Listeners
 startBtn.addEventListener('click', startGame);
 actionBtn.addEventListener('click', submitAnswer);
+pauseBtn.addEventListener('click', () => {
+    state.isPaused = !state.isPaused;
+    updateUI();
+});
 
 // Initial Score Fetch
 fetchScore();

@@ -4,6 +4,7 @@ Una app web para ponerte a prueba y jugar tu misma a los juegos de palabras y n�
 ## Índice
 1. [Preámbulo](#preambulo)
 2. [Prerrequisitos](#prerrequisitos)
+3. [Instalación y uso](#instalacion-y-uso)
 3. [Descargo de responsabilidad](#disclaimer--descargo-de-responsabilidad)
 
 ## Preámbulo
@@ -27,7 +28,35 @@ También escribo este preámbulo (y lo pongo deliberadamente al principio del RE
 En conclusión, no voy a profundizar ni a filosofar más en este humilde README. Dicho esto y que ya he podido dar mi opinión de manera abierta sobre el tema, vamos a detallar las instrucciones del repositorio.
 
 ## Prerrequisitos
-TBD
+Python 3.10+ y venv. (Añadir más info aquí luego).
+
+## Instalación y uso
+- Clonar el repo (sin este primer paso, mal):
+```
+git clone <url-del-repositorio>
+cd cifrasyletras
+```
+- Crear y activar el entorno virtual:
+```
+python3 -m venv venv
+source venv/bin/activate
+```
+- Una vez dentro del venv, instalar las dependencias:
+```
+pip install -r requirements.txt
+```
+- Luego inicializar la base de datos SQLite:
+```
+python scripts/init_db.py
+```
+- Lanzar el servidor:
+```
+uvicorn backend.main:app --reload
+```
+- Finalmente, abrir un navegador e introducir la siguiente URL:
+```
+http://localhost:8000/
+```
 
 ## Disclaimer / Descargo de responsabilidad
 **English:**

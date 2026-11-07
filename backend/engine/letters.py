@@ -67,3 +67,48 @@ class LetterEngine:
                     longest_word = word
         
         return longest_word, max_length
+
+    def validate_word(self, word: str, available_letters: List[str]) -> bool:
+        """
+        Checks if a word is valid:
+        1. Exists in the dictionary (or is a prefix before a comma).
+        2. Can be formed using the available letters.
+        """
+        word = word.lower()
+        
+        # Check if in dictionary or if it's a prefix before a comma
+        conn = self._get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT word FROM words WHERE word LIKE ?", (f"{word}%",))
+        rows = cursor.fetchall()
+        conn.close()
+
+        if not rows:
+            return False
+
+        is_valid_entry = False
+        for (row_word,) in rows:
+            row_word_lower = row_word.lower()
+            if row_word_lower == word:
+                is_valid_entry = True
+                break
+            if "," in row_word and row_word_lower.split(",")[0] == word:
+                is_valid_entry = True
+                break
+        
+        if not is_valid_entry:
+            return False
+            
+        letter_pool = {}
+        for char in available_letters:
+            upper_char = char.upper()
+            letter_pool[upper_char] = letter_pool.get(upper_char, 0) + 1
+
+        current_word_counts = {}
+        for char in word:
+            upper_char = char.upper()
+            current_word_counts[upper_char] = current_word_counts.get(upper_char, 0) + 1
+            if current_word_counts[upper_char] > letter_pool.get(upper_char, 0):
+                return False
+        
+        return True
