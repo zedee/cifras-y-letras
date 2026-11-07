@@ -7,7 +7,8 @@ const state = {
     currentRound: 0,
     timer: 0,
     timerInterval: null,
-    isLoading: false
+    isLoading: false,
+    currentData: null // Added to store the current round's data
 };
 
 // DOM Elements
@@ -15,7 +16,6 @@ const scoreEl = document.getElementById('score');
 const powerPointsEl = document.getElementById('power-points');
 const timerEl = document.getElementById('timer');
 const roundTitleEl = document.getElementById('round-title');
-const roundDescriptionEl.innerText = "Presiona 'Empezar' para comenzar.";
 const roundDescriptionEl = document.getElementById('round-description');
 const contentAreaEl = document.getElementById('content-area');
 const userInputEl = document.getElementById('user-input');
@@ -41,9 +41,11 @@ async function fetchScore() {
 
 async function startGame() {
     // Reset State
+    roundDescriptionEl.innerText = "Presiona 'Empezar' para comenzar.";
     state.currentRound = 1;
     state.timer = 40;
     state.isLoading = true;
+    state.currentData = null; // Clear previous data
     
     actionBtn.disabled = true;
     contentAreaEl.innerHTML = `<div class="loading-spinner">Calculando primera ronda...</div>`;
@@ -66,6 +68,9 @@ async function startGame() {
             const response = await fetch(`${API_BASE}/start-numbers`);
             const data = await response.json();
             
+            // FIX: Save data so submitAnswer can use it
+            state.currentData = data;
+            
             roundTitleEl.innerText = "Round " + state.currentRound + ": Números";
             roundDescriptionEl.innerText = "Logra el número objetivo con las cifras dadas.";
             inputHintEl.innerText = "Introduce el resultado final (ej: 150)";
@@ -81,6 +86,9 @@ async function startGame() {
             // Letter Round
             const response = await fetch(`${API_BASE}/start-letters?vowel_count=3`);
             const data = await response.json();
+            
+            // FIX: Save letters so submitAnswer can use them
+            state.currentData = data;
             
             roundTitleEl.innerText = "Round " + state.currentRound + ": Letras";
             roundDescriptionEl.innerText = "Forma la palabra más larga con estas letras.";
@@ -99,7 +107,7 @@ async function startGame() {
 }
 
 async function submitAnswer() {
-    const userValue = userInputEl.value;
+    const userValue = userInputEl.value.trim();
     if (!userValue) return;
 
     actionBtn.disabled = true;
@@ -113,15 +121,25 @@ async function submitAnswer() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     user_value: parseInt(userValue),
-                    best_val: state.currentData?.best_val // Note: currentData needs to be saved in startGame
+                    best_val: state.currentData?.best_val 
                 })
             });
             const scoreData = await response.json();
             state.score = scoreData.main_score;
             updateUI();
         } else {
-            // Letter logic will be added here
-            console.log("Letter submitted:", userValue);
+            // Submit Letters
+            const response = await fetch(`${API_BASE}/submit-letters`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    word: userValue,
+                    letters: state.currentData?.letters
+                })
+            });
+            const scoreData = await response.json();
+            state.score = scoreData.main_score;
+            updateUI();
         }
 
         userInputEl.value = "";
@@ -133,9 +151,7 @@ async function submitAnswer() {
         } else {
             roundTitleEl.innerText = "Round " + state.currentRound;
             contentAreaEl.innerText = "Cargando siguiente ronda...";
-            // Next round fetch will happen automatically if we trigger it here
             setTimeout(() => {
-                // Logic to trigger next round automatically or manually
                 startGame(); 
             }, 1000);
         }

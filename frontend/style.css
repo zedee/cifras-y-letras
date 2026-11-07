@@ -1,4 +1,68 @@
-/* New styles for the updated UI */
+/* --- Base Styles --- */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+#game-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    width: 90%;
+    max-width: 600px;
+    text-align: center;
+}
+
+/* --- Header & Stats --- */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stats {
+    display: flex;
+    gap: 1rem;
+}
+
+.stat-box {
+    background: #e9ecef;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+}
+
+.stat-box .label {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: #666;
+}
+
+/* --- Buttons --- */
+button {
+    padding: 0.8rem 1.5rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
 #start-game-btn {
     background-color: #28a745;
     margin-top: 0.5rem;
@@ -6,11 +70,64 @@
     font-size: 0.8rem;
 }
 
+#start-game-btn:hover {
+    background-color: #1e7e34;
+}
+
+#action-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* --- Main Content --- */
+main {
+    margin-bottom: 1rem;
+}
+
+#round-info h2 {
+    margin-bottom: 0.5rem;
+}
+
+#game-display {
+    margin: 2rem 0;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    min-height: 150px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* --- Controls & Input --- */
+.controls {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: flex-end;
+}
+
 .input-group {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.5rem;
+}
+
+input {
+    padding: 0.8rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    width: 60%;
+}
+
+input:focus {
+    outline: none;
+    border-color: #007bff;
 }
 
 .hint {
@@ -19,11 +136,7 @@
     font-style: italic;
 }
 
-#action-btn:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-}
-
+/* --- Animations & Misc --- */
 .loading-spinner {
     color: #007bff;
     font-style: italic;
@@ -34,4 +147,10 @@
     0% { opacity: 1; }
     50% { opacity: 0.5; }
     100% { opacity: 1; }
+}
+
+footer {
+    margin-top: 2rem;
+    font-size: 0.7rem;
+    color: #999;
 }

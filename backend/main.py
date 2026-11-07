@@ -66,7 +66,17 @@ def submit_numbers(data: dict):
     game_state["score_manager"].add_number_round_score(is_exact, False)
     return game_state["score_manager"].get_current_scores()
 
+@app.post("/submit-letters")
+def submit_letters(data: dict):
+    word = data.get("word", "").lower()
+    # For the first iteration, we'll assume any word > 4 letters is correct.
+    # We can add the complex validation logic from LetterEngine here later.
+    is_correct = len(word) >= 4
+    
+    # Add score (1 point per letter if correct)
+    game_state["score_manager"].add_letter_round_score(len(word) if is_correct else 0)
+    return game_state["score_manager"].get_current_scores()
+
 # --- STATIC FILES ---
 # We mount the frontend folder to the root path.
-# This allows the browser to find style.css and app.js at /style.css and /app.js
 app.mount("/", StaticFiles(directory="frontend"), name="frontend")
