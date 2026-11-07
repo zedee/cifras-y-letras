@@ -3,6 +3,7 @@
 .history/
 *.code-workspace
 *.db
+agent-handover.md
 
 # --- Python ---
 __pycache__/
