@@ -13,7 +13,7 @@ from backend.engine.scoring import ScoreManager
 
 app = FastAPI(title="Cifras y Letras API")
 
-# Enable CORS (Still good to have for the browser)
+# Enable CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -34,7 +34,7 @@ game_state = {
 
 @app.get("/")
 def read_root():
-    # This serves the index.html file from the frontend folder
+    # This serves the index.html file
     return FileResponse("frontend/index.html")
 
 @app.get("/score")
@@ -63,16 +63,10 @@ def start_letters(vowel_count: int = 3):
 @app.post("/submit-numbers")
 def submit_numbers(data: dict):
     is_exact = data.get("user_value") == data.get("best_val")
-    # In solo mode, we reward exact matches
     game_state["score_manager"].add_number_round_score(is_exact, False)
     return game_state["score_manager"].get_current_scores()
 
 # --- STATIC FILES ---
-# This mounts the frontend directory so that the browser can find style.css and app.js
-# We mount it to "/" so that the paths in your index.html stay correct.
-app.mount("/static", StaticFiles(directory="frontend"), name="static")
-
-# Note: To make the index.html find the CSS/JS files, 
-# we need to ensure the paths in index.html are correct.
-# Since we are serving index.html from the root, 
-# FastAPI will look for them in the same folder.
+# We mount the frontend folder to the root path.
+# This allows the browser to find style.css and app.js at /style.css and /app.js
+app.mount("/", StaticFiles(directory="frontend"), name="frontend")
