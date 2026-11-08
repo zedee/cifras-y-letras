@@ -1,5 +1,5 @@
 import pytest
-from backend.engine.scoring import ScoreManager
+from Apiservice.engine.scoring import ScoreManager
 
 def test_scoring_progression():
     sm = ScoreManager()

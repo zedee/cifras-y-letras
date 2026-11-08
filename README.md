@@ -51,7 +51,7 @@ python scripts/init_db.py
 ```
 - Lanzar el servidor:
 ```
-uvicorn backend.main:app --reload
+uvicorn Apiservice.main:app --reload
 ```
 - Finalmente, abrir un navegador e introducir la siguiente URL:
 ```

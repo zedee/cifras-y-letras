@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:8000";
+import { Apiservice } from './apiservice.js';
 
 // Game State
 const state = {
@@ -9,7 +9,8 @@ const state = {
     timerInterval: null,
     isLoading: false,
     isPaused: false,
-    currentData: null
+    currentData: null,
+    bestPathHint: "" 
 };
 
 // Number Round Interaction State
@@ -42,34 +43,17 @@ const opBtns = document.querySelectorAll('.op-btn');
 function updateUI() {
     scoreEl.innerText = state.score;
     powerPointsEl.innerText = state.powerPoints;
-    
-    // --- TIMER_CODE_COMMENTED_OUT ---
-    /*
-    const minutes = Math.floor(state.timer / 60);
-    const seconds = state.timer % 60;
-    timerEl.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    
-    if (state.isPaused) {
-        document.getElementById('game-container').classList.add('paused');
-        pauseBtn.innerText = "Reanudar";
-    } else {
-        document.getElementById('game-container').classList.remove('paused');
-        pauseBtn.innerText = "Pausa";
-    }
-    */
 }
 
-async function fetchScore() {
-    try {
-        const response = await fetch(`${API_BASE}/score`);
-        const data = await response.json();
+async function loadInitialScore() {
+    const data = await Apiservice.fetchScore();
+    if (data) {
         state.score = data.main_score;
         state.powerPoints = data.power_points;
         updateUI();
-    } catch (e) { console.error("Error fetching score"); }
+    }
 }
 
-// Helper to create the chip container to avoid clearing the Target
 function getOrCreateChipContainer() {
     let container = document.getElementById('number-chips-container');
     if (!container) {
@@ -82,7 +66,7 @@ function getOrCreateChipContainer() {
 
 function renderNumberRound() {
     const chipContainer = getOrCreateChipContainer();
-    chipContainer.innerHTML = ""; // Only clear the chips, not the Target
+    chipContainer.innerHTML = ""; 
     
     interactionUI.style.display = "block";
     
@@ -103,7 +87,7 @@ function selectNumber(index) {
     } else if (selectedA !== index && selectedB === null) {
         selectedB = index;
     } else {
-        selectedA = index; // Switch selection if clicking a third time
+        selectedA = index; 
         selectedB = null;
     }
     renderNumberRound();
@@ -117,7 +101,6 @@ opBtns.forEach(btn => {
     };
 });
 
-//Adds a calculation to history on the number challenge
 function addCalcToHistory() {
     if (selectedA === null || selectedB === null || selectedOp === null) {
         alert("Selecciona dos números y una operación.");
@@ -140,7 +123,6 @@ function addCalcToHistory() {
         return;
     }
 
-    // Update State
     currentNumbers[selectedA].isUsed = true;
     currentNumbers[selectedB].isUsed = true;
     
@@ -157,43 +139,46 @@ function addCalcToHistory() {
     historyEl.innerHTML += `<div class="history-item">${stepStr}</div>`;
     historyEl.scrollTop = historyEl.scrollHeight;
 
-    // Add new chip for result
     currentNumbers.push({
         value: result,
         id: Date.now().toString(),
         isUsed: false
     });
 
-    // Reset selection
+    // --- ANTI-CHEAT & AUTOFILL ---
+    // If it's a numbers round, force the input field to show the result and be read-only
+    if (state.currentRound % 2 !== 0) {
+        userInputEl.value = result;
+        userInputEl.readOnly = true;
+        userInputEl.style.backgroundColor = "#e9ecef"; // Visual cue it's read-only
+        userInputEl.style.cursor = "not-allowed";
+    }
+
     selectedA = null;
     selectedB = null;
     selectedOp = null;
     opBtns.forEach(b => b.classList.remove('active'));
     
     renderNumberRound();
-};
+}
 
-//Removes last calculation from history on the number challenge
 function removeCalcFromHistory() {
     if (calculationHistory.length === 0) return;
 
     const lastEntry = calculationHistory.pop();
     
-    // Liberate the numbers used in that specific calculation
     currentNumbers[lastEntry.valA_idx].isUsed = false;
     currentNumbers[lastEntry.valB_idx].isUsed = false;
     
-    // Remove the last chip (the result of the removed calculation)
     currentNumbers.pop();
     
-    // Update UI
     const historyItems = historyEl.querySelectorAll('.history-item');
     if (historyItems.length > 0) {
         historyItems[historyItems.length - 1].remove();
     }
 
     renderNumberRound();
-};
+}
 
 async function startGame() {
     if (state.currentRound === 0) {
@@ -216,31 +201,11 @@ async function startGame() {
     selectedB = null;
     selectedOp = null;
     
-    // --- TIMER_CODE_COMMENTED_OUT ---
-    /*
-    clearInterval(state.timerInterval);
-    state.timerInterval = setInterval(() => {
-        if (!state.isPaused) {
-            state.timer--;
-            updateUI();
-            if (state.timer <= 0) {
-                clearInterval(state.timerInterval);
-                alert("¡Tiempo agotado!");
-                actionBtn.disabled = false;
-                userInputEl.disabled = false;
-            }
-        }
-    }, 1000);
-    */
-
     try {
         if (state.currentRound % 2 !== 0) {
-            // Number Round
-            const response = await fetch(`${API_BASE}/start-numbers`);
-            const data = await response.json();
-            
+            const data = await Apiservice.fetchStartNumbers();
             state.currentData = data;
-            best_path_hint = data.best_path ? data.best_path.join(' + ') : "No hint available";
+            state.bestPathHint = data.best_path ? data.best_path.join(' + ') : "No hint available";
             
             roundTitleEl.innerText = "Ronda " + state.currentRound + ": Números";
             roundDescriptionEl.innerText = "Logra el número objetivo con las cifras dadas.";
@@ -261,7 +226,6 @@ async function startGame() {
             targetDiv.innerText = "Objetivo: " + data.target;
             contentAreaEl.appendChild(targetDiv);
 
-            // Add the Hint button
             const hintBtn = document.createElement('button');
             hintBtn.innerText = "Mostrar Solución Óptima";
             hintBtn.style.marginTop = "10px";
@@ -280,7 +244,7 @@ async function startGame() {
             hintArea.style.background = "#e9ecef";
             hintArea.style.borderRadius = "8px";
             hintArea.style.fontSize = "0.9rem";
-            hintArea.innerHTML = `<strong>Mejor camino:</strong> ${best_path_hint}`;
+            hintArea.innerHTML = `<strong>Mejor camino:</strong> ${state.bestPathHint}`;
             
             contentAreaEl.appendChild(hintBtn);
             contentAreaEl.appendChild(hintArea);
@@ -288,10 +252,7 @@ async function startGame() {
             renderNumberRound();
 
         } else {
-            // Letter Round
-            const response = await fetch(`${API_BASE}/start-letters?vowel_count=3`);
-            const data = await response.json();
-            
+            const data = await Apiservice.fetchStartLetters(3);
             state.currentData = data;
             
             roundTitleEl.innerText = "Ronda " + state.currentRound + ": Letras";
@@ -334,48 +295,71 @@ async function submitAnswer() {
     contentAreaEl.innerHTML = `<div class="loading-spinner">Enviando respuesta...</div>`;
 
     try {
+        let scoreData;
         if (state.currentRound % 2 !== 0) {
-            // Submit Numbers
-            const response = await fetch(`${API_BASE}/submit-numbers`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    user_value: finalValue,
-                    target: state.currentData?.target,
-                    best_val: state.currentData?.best_val 
-                })
+            scoreData = await Apiservice.submitNumbers({
+                user_value: finalValue,
+                target: state.currentData?.target,
+                best_val: state.currentData?.best_val 
             });
-            const scoreData = await response.json();
-            state.score = scoreData.main_score;
-            updateUI();
         } else {
-            // Submit Letters
-            const response = await fetch(`${API_BASE}/submit-letters`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    word: finalValue,
-                    letters: state.currentData?.letters
-                })
+            scoreData = await Apiservice.submitLetters({
+                word: finalValue,
+                letters: state.currentData?.letters
             });
-            const scoreData = await response.json();
-            state.score = scoreData.main_score;
-            updateUI();
+        }
+        
+        const oldScore = state.score;
+        state.score = scoreData.main_score;
+        updateUI();
+
+        // --- FEEDBACK LOGIC ---
+        let feedbackMsg = "";
+        if (state.currentRound % 2 !== 0) {
+            const target = state.currentData?.target;
+            const diff = Math.abs(target - finalValue);
+            if (diff === 0) {
+                feedbackMsg = "¡Exacto! ¡Increíble!";
+            } else if (diff <= 5) {
+                feedbackMsg = "¡Casi! Estás muy cerca.";
+            } else {
+                feedbackMsg = "Sigue intentándolo.";
+            }
+        } else {
+            feedbackMsg = `¡Buen intento! Has ganado ${state.score - oldScore} puntos.`;
         }
 
-        userInputEl.value = "";
-        state.currentRound++;
-        
-        if (state.currentRound > 6) {
-            alert("¡Juego Terminado!");
-            location.reload();
-        } else {
-            roundTitleEl.innerText = "Ronda " + state.currentRound;
-            contentAreaEl.innerText = "Cargando siguiente ronda...";
-            setTimeout(() => {
-                startGame(); 
-            }, 1000);
-        }
+        contentAreaEl.innerHTML = `
+            <div style="text-align: center; padding: 20px;">
+                <h2 style="color: #28a745;">${feedbackMsg}</h2>
+                <p>Puntos actuales: ${state.score}</p>
+            </div>
+        `;
+
+        // Wait 2 seconds so the user can read the feedback
+        setTimeout(() => {
+            userInputEl.value = "";
+            // Reset read-only status for next round if it was Numbers round
+            if (state.currentRound % 2 !== 0) {
+                userInputEl.readOnly = false;
+                userInputEl.style.backgroundColor = "";
+                userInputEl.style.cursor = "default";
+            }
+
+            state.currentRound++;
+            
+            if (state.currentRound > 6) {
+                alert("¡Juego Terminado!");
+                location.reload();
+            } else {
+                roundTitleEl.innerText = "Ronda " + state.currentRound;
+                contentAreaEl.innerText = "Cargando siguiente ronda...";
+                setTimeout(() => {
+                    startGame(); 
+                }, 1000);
+            }
+        }, 2500);
+
     } catch (e) {
         console.error(e);
         contentAreaEl.innerText = "Error al enviar respuesta.";
@@ -394,4 +378,4 @@ addCalcBtn.addEventListener('click', addCalcToHistory);
 removeCalcBtn.addEventListener('click', removeCalcFromHistory);
 
 // Initial Score Fetch
-fetchScore();
+loadInitialScore();

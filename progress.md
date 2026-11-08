@@ -33,7 +33,7 @@
 - [ ] **Milestone 7: Solo Mode Frontend**
     - [ ] Build HTML/CSS/JS interface.
     - [x] Establish API connection (FastAPI structure).
-    - [ ] Connect frontend to Python backend.
+    - [ ] Connect frontend to Python Apiservice.
     - [ ] Implement timers.
 - [ ] **Milestone 8: Polishing & Documentation**
     - [ ] Final testing and Docker deployment.
