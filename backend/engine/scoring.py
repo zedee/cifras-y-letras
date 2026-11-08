@@ -45,6 +45,12 @@ class ScoreManager:
             self.power_points += 100
         return self.power_points
 
+    def reset_for_endgame(self):
+        """Resets the power points for a new game session."""
+        self.power_points = 0
+
+        return self.power_points
+
     def reset_score(self):
         """Resets the all points for a new game session."""
         self.score = 0

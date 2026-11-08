@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import MagicMock, patch
-from Apiservice.engine.duels import DuelEngine
+from backend.engine.duels import DuelEngine
 
 @pytest.fixture
 def duel_engine():
