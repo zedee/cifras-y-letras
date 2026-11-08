@@ -12,14 +12,32 @@ class NumberEngine:
         self._memo = {}
 
     def generate_numbers(self) -> List[int]:
-        """Generates 6 numbers based on the weighted distribution."""
+        """Generates 6 numbers based on the weighted distribution, 
+        ensuring landmarks (25, 50, 75, 100) appear at most once."""
         numbers = []
         population = []
         for val, weight in self.pool:
             population.extend([val] * weight)
         
-        for _ in range(6):
-            numbers.append(random.choice(population))
+        landmarks = {25, 50, 75, 100}
+        picked_landmarks = set()
+        
+        # Continue until we have exactly 6 numbers
+        while len(numbers) < 6:
+            num = random.choice(population)
+            
+            if num in landmarks:
+                # If it's a landmark, only add it if it hasn't been picked yet this round
+                if num not in picked_landmarks:
+                    numbers.append(num)
+                    picked_landmarks.add(num)
+                else:
+                    # It's a duplicate landmark, skip this choice and try again
+                    continue
+            else:
+                # Non-landmarks (1-10, etc.) can appear multiple times
+                numbers.append(num)
+                
         return numbers
 
     def solve(self, numbers: List[int], target: int) -> Tuple[int, List[str]]:
