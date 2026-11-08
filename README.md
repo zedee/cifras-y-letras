@@ -4,8 +4,9 @@ Una app web para ponerte a prueba y jugar tu misma a los juegos de palabras y n�
 ## Índice
 1. [Preámbulo](#preambulo)
 2. [Prerrequisitos](#prerrequisitos)
-3. [Instalación y uso](#instalacion-y-uso)
-3. [Descargo de responsabilidad](#disclaimer--descargo-de-responsabilidad)
+3. [Instalación y uso en local](#instalacion-y-uso-en-local-o-para-desarrollo)
+4. [Docker y "Containerización"](#docker-y--containerizacion-)
+5. [Descargo de responsabilidad](#disclaimer--descargo-de-responsabilidad)
 
 ## Preámbulo
 Lectura totalmente **opcional**, puedes ir directo a los [Prerrequisitos](#prerrequisitos)
@@ -28,9 +29,11 @@ También escribo este preámbulo (y lo pongo deliberadamente al principio del RE
 En conclusión, no voy a profundizar ni a filosofar más en este humilde README. Dicho esto y que ya he podido dar mi opinión de manera abierta sobre el tema, vamos a detallar las instrucciones del repositorio.
 
 ## Prerrequisitos
-Python 3.10+ y venv.
+- Python 3.10 o superior
+- pip
+- venv
 
-## Instalación y uso
+## Instalación y uso en local o para desarrollo
 - Clonar el repo (sin este primer paso, mal):
 ```
 git clone <url-del-repositorio>
@@ -56,6 +59,51 @@ uvicorn backend.main:app --reload
 - Finalmente, abrir un navegador e introducir la siguiente URL:
 ```
 http://localhost:8000/
+```
+
+## Docker y "Containerización"
+El proyecto se puede "Dockerizar" para poderlo desplegar de manera fácil, o bien usarlo en tu máquina local sin tener que instalar dependencias, aunque sí que probablemente tendrás que generar almenos la
+base de datos SQLite.
+
+### Prerequisitos para Docker
+- Docker installed
+- Docker Compose installed
+- O bien, Docker Desktop.
+
+### Método 1: Docker Compose (Sota-Caballo-Rey)
+Si usas docker-compose es lo más fácil, porque ya se encarga de todo "automágicamente". No hace falta bindear puertos ni comerse la cabeza.
+
+**Hace el build y arranca la aplicación**
+```bash
+docker-compose up --build
+```
+
+**Puedes ejecutarlo en modo "Detached" (lo que viene a ser en segundo plano)**
+```bash
+docker-compose up -d --build
+```
+
+**Parar y quitar los contenedores**
+```bash
+docker-compose down
+```
+
+### Método 2: Comandos por separado (hacerlo a "manija")
+Si prefieres tener más control y usarlo sin Compose, puedes hacerlo también manualmente:
+
+**Cosntruir la imagen:**
+```bash
+docker build -t cifras-y-letras .
+```
+
+**Poner en marcha el contenedor:**
+```bash
+docker run -p 8000:8000 --name game_instance cifras-y-letras
+```
+
+**Parar el contenedor:**
+```bash
+docker stop game_instance
 ```
 
 ## Disclaimer / Descargo de responsabilidad
