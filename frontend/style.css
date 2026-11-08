@@ -1,3 +1,11 @@
+:root {
+    --cyl--number-button-width: 50px;
+    
+    @media screen and (max-width: 640px) {
+        --cyl--number-button-width: 24px;
+    }
+}
+
 /* --- Base Styles --- */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -97,23 +105,31 @@ main {
     font-size: 1.5rem;
     font-weight: bold;
     display: flex;
+    gap: 1rem;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
+#number-chips-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
 /* --- Controls & Input --- */
 .controls {
     display: flex;
+    flex-direction: column;
     gap: 1rem;
     justify-content: center;
-    align-items: flex-end;
+    align-items: center;
 }
 
 .input-group {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
     gap: 0.5rem;
 }
 
@@ -177,15 +193,17 @@ footer {
 
 /* --- Number Round Interaction --- */
 .chip {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     padding: 1rem;
     margin: 0.5rem;
     background: #007bff;
     color: white;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    line-height: 50px;
+    border-radius: 30%;
+    width: var(--cyl--number-button-width);
+    height: var(--cyl--number-button-width);
+    line-height: 1;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.2s;
