@@ -13,11 +13,15 @@ In this game show, two contestants must make it through a certain number of roun
 - If neither contestant obtains the best possible solution, the one who comes closest to the target scores seven points. Both contestants score in this case if their results are identical or equally close to the target on either side.
 
 ## The rounds with questions involving letters:
-- In this round, one contestant is asked how many vowels they would like to be used in a selection of 10 randomly generated letters, each chosen unseen from all possible vowels or consonants. The same letter may appear more than once. The game originally used seven letters, increasing with time to eight and then nine; the 10-letter rule was instituted on 4 April 2010. Contestants previously selected letters by calling for one vowel or consonant at a time.
+- In this round, one contestant is asked how many vowels they would like to be used (they can choose from 3 to 6 vowels). 
+- With this amount of vowels selection, the letters are chosen randomly. The same letter may appear more than once, but is quite uncommon that the same letter appears more than twice. 
+- A sample of the random pick choosing 4 vowels would be: "A" "Q" "E" "N" "I" "I" "L" "N" "R" "P".
+- That means, 4 random vowels and 6 random consonants.
+- Total of letters are 10 (consonants + vowels).
 - Once the letters are selected, the contestants are given 30 seconds to form the longest word possible, using each letter no more times than it appears. The contestant who forms the longer valid word scores one point per letter used; if both contestants find the same word or words of equal length, each one scores. Diacritics are not shown on the letters, but may be added as needed: for instance, the Spanish word caminar (to walk) can be formed with the tiles C A M I N A R.
+- Minimum word length is of 5 letters.
 - Only single words are admitted. No spaces, no hyphens.
 - Plural and singular form, genre (masculine, femenine and neutral) as well as and verb conjugations are accepted as valid words.
-- Minimum word length is of 4 words.
 
 ## The duel
 - After these 6 rounds switching between numbers and letters (there's 3 rounds for numbers and 3 rounds for letters), the contestants will have an additional round called the "duels".
