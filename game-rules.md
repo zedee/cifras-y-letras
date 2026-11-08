@@ -59,9 +59,12 @@ In this game show, two contestants must make it through a certain number of roun
 - The game will be packed in a docker image for further distribution and deployment, unless you got better recomendations.
 - During the development, write a document of each step done, so we can keep track of what  we've done so far in case we need to review or rollback. This document doesn't need to be super detailed, think about more of a checklist, or a plan with milestones.
 
-### Additional permissions
+### Additional permissions and rules
 - If anything is unclear, before making a wrong assumption, is perfectly fine to prompt a question. All the clarifications will be added to our documentation.
 - You're allowed to do additional research by using your search tools.
+- You can only use your tools for "read-only" actions (ls, cat, grep)
+- You cannot use your tools for "write actions" anywhere oustide your sandbox.
+- Please output the full code on your answer turn, so the dev can compare and update it manually. This is the general rule, we can have exceptions for instance when changing a few lines, to save context window.
 
 ## Additional sources:
 - [Des Chiffres et des Lettres (Wikipedia)](https://en.wikipedia.org/wiki/Des_chiffres_et_des_lettres)
