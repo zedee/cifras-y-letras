@@ -12,16 +12,34 @@ class LetterEngine:
 
     def generate_letters(self, vowel_count: int) -> List[str]:
         """
-        Generates 10 letters based on the number of vowels requested.
+        Generates 10 letters based on the number of vowels requested 
+        using weighted distribution for Spanish frequency.
         """
-        vowels = "AEIOUaeiou"
-        consonants = "".join([c for c in string.ascii_letters if c not in vowels])
+        # Weights based on Spanish frequency
+        # High freq consonants
+        high_freq = [('S', 10), ('R', 10), ('N', 10), ('D', 10), ('L', 10), ('C', 10)]
+        # Medium freq consonants
+        med_freq = [('T', 5), ('M', 5), ('P', 5), ('G', 5), ('B', 5), ('F', 5), ('V', 5), ('H', 5)]
+        # Low freq consonants
+        low_freq = [('J', 1), ('Q', 1), ('X', 1), ('Z', 1), ('K', 1), ('W', 1), ('Ñ', 1)]
+        # Vowels
+        vowels_pool = [('A', 8), ('E', 8), ('I', 8), ('O', 8), ('U', 8)]
+
+        population_vowels = []
+        for char, weight in vowels_pool:
+            population_vowels.extend([char] * weight)
         
-        letters = []
-        for _ in range(vowel_count):
-            letters.append(random.choice(vowels).upper())
-        for _ in range(10 - vowel_count):
-            letters.append(random.choice(consonants).upper())
+        population_consonants = []
+        for char, weight in high_freq + med_freq + low_freq:
+            population_consonants.extend([char] * weight)
+
+        # Pick the counts
+        selected_vowels = random.sample(population_vowels, vowel_count)
+        selected_consonants = random.sample(population_consonants, 10 - vowel_count)
+
+        # Combine and shuffle to ensure interleaving
+        letters = selected_vowels + selected_consonants
+        random.shuffle(letters)
         
         return letters
 
@@ -30,7 +48,6 @@ class LetterEngine:
         Finds the longest valid word from the dictionary that can be 
         formed using the available letters.
         """
-        # Count available letters (ensure keys are uppercase for consistency)
         letter_pool = {}
         for char in available_letters:
             upper_char = char.upper()
@@ -41,8 +58,6 @@ class LetterEngine:
 
         conn = self._get_db_connection()
         cursor = conn.cursor()
-
-        # We fetch words from the DB. 
         cursor.execute("SELECT word FROM words")
         rows = cursor.fetchall()
         conn.close()
@@ -55,8 +70,6 @@ class LetterEngine:
             for char in word_clean:
                 upper_char = char.upper()
                 current_word_counts[upper_char] = current_word_counts.get(upper_char, 0) + 1
-                
-                # Check if we've exceeded the available count for this letter
                 if current_word_counts[upper_char] > letter_pool.get(upper_char, 0):
                     possible = False
                     break
@@ -71,12 +84,15 @@ class LetterEngine:
     def validate_word(self, word: str, available_letters: List[str]) -> bool:
         """
         Checks if a word is valid:
-        1. Exists in the dictionary (or is a prefix before a comma).
-        2. Can be formed using the available letters.
+        1. Minimum length of 5.
+        2. Exists in the dictionary (or is a prefix before a comma).
+        3. Can be formed using the available letters.
         """
         word = word.lower()
         
-        # Check if in dictionary or if it's a prefix before a comma
+        if len(word) < 5:
+            return False
+            
         conn = self._get_db_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT word FROM words WHERE word LIKE ?", (f"{word}%",))

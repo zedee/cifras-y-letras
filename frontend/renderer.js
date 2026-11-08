@@ -66,7 +66,6 @@ export function getInputValue() {
 export function clearContent() {
     elements.contentArea.innerHTML = "";
     elements.historyEl.innerHTML = "";
-    // Instead of just clearing innerHTML, we ensure the chipContainer is ready for re-init
     elements.chipContainer = null; 
 }
 
@@ -184,4 +183,30 @@ export function setContentText(text, fontSize, color) {
     elements.contentArea.innerText = text;
     elements.contentArea.style.fontSize = fontSize;
     elements.contentArea.style.color = color;
+}
+
+export function showVowelSelection() {
+    elements.contentArea.innerHTML = `
+        <div style="text-align: center; padding: 20px;">
+            <h3>Elige el número de vocales:</h3>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                <button class="vowel-btn" data-count="3">3</button>
+                <button class="vowel-btn" data-count="4">4</button>
+                <button class="vowel-btn" data-count="5">5</button>
+                <button class="vowel-btn" data-count="6">6</button>
+            </div>
+        </div>
+    `;
+
+    const buttons = elements.contentArea.querySelectorAll('.vowel-btn');
+    buttons.forEach(btn => {
+        btn.style.padding = "10px 20px";
+        btn.style.fontSize = "1.2rem";
+        btn.style.cursor = "pointer";
+        btn.onclick = () => {
+            const count = parseInt(btn.dataset.count);
+            // We'll call a global helper or handle via game.js
+            window.onVowelSelected(count);
+        };
+    });
 }

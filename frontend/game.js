@@ -176,17 +176,15 @@ export async function startGame() {
             */
 
         } else {
-            const data = await Apiservice.fetchStartLetters(3);
-            state.currentData = data;
-            
+            // Handle Vowel Selection flow
             renderer.setRoundInfo(
                 "Ronda " + state.currentRound + ": Letras",
                 "Forma la palabra más larga con estas letras.",
-                "Escribe la palabra más larga que puedas formar."
+                "Elige el número de vocales antes de empezar."
             );
             
-            renderer.setContentText(data.letters.join(' '), "2.5rem", "#333");
-            renderer.setInteractionUIVisibility(false);
+            renderer.showVowelSelection();
+
         }
     } catch (e) {
         console.error(e);
@@ -197,6 +195,27 @@ export async function startGame() {
         renderer.toggleControls(true);
     }
 }
+
+// Global handler for vowel selection to bridge renderer -> game
+window.onVowelSelected = async (vowelCount) => {
+    renderer.clearContent();
+    renderer.setRoundInfo(
+        "Ronda " + state.currentRound + ": Letras",
+        "Forma la palabra más larga con estas letras.",
+        "Escribe la palabra más larga que puedas formar."
+    );
+
+    try {
+        const data = await Apiservice.fetchStartLetters(vowelCount);
+        state.currentData = data;
+        
+        renderer.setContentText(data.letters.join(' '), "2.5rem", "#333");
+        renderer.setInteractionUIVisibility(false);
+    } catch (e) {
+        console.error(e);
+        renderer.setLoading(false, "Error al generar letras. Reintenta.");
+    }
+};
 
 export async function submitAnswer() {
     let finalValue = null;
