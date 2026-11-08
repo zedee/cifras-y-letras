@@ -20,6 +20,9 @@ let selectedB = null;   // index in currentNumbers
 let selectedOp = null;  // "+", "-", "*", "/"
 let calculationHistory = []; // Array of { stepStr, valA, valB, valA_idx, valB_idx, result }
 
+// Configuration
+const numberShowDelay = 250; // Delay in ms for showing each number
+
 // DOM Elements
 const scoreEl = document.getElementById('score');
 const powerPointsEl = document.getElementById('power-points');
@@ -40,6 +43,9 @@ const historyEl = document.getElementById('calc-history');
 const addCalcBtn = document.getElementById('add-calc-btn');
 const removeCalcBtn = document.getElementById('remove-calc-btn');
 const opBtns = document.querySelectorAll('.op-btn');
+
+// Helper Functions
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 function updateUI() {
     scoreEl.innerText = state.score;
@@ -222,18 +228,14 @@ async function startGame() {
             roundDescriptionEl.innerText = "Logra el número objetivo con las cifras dadas.";
             inputHintEl.innerText = "Usa los botones para realizar cálculos.";
             
-            currentNumbers = data.numbers.map((val, idx) => ({
-                value: val,
-                id: `n-${idx}`,
-                isUsed: false
-            }));
-            
             contentAreaEl.innerHTML = "";
             
+            // Create a hidden target container
             const targetDiv = document.createElement('div');
             targetDiv.style.fontSize = "1.5rem";
             targetDiv.style.color = "#007bff";
             targetDiv.style.marginBottom = "1rem";
+            targetDiv.style.display = "none"; // Initially hidden
             targetDiv.innerText = "Objetivo: " + data.target;
             contentAreaEl.appendChild(targetDiv);
 
@@ -259,8 +261,32 @@ async function startGame() {
             
             contentAreaEl.appendChild(hintBtn);
             contentAreaEl.appendChild(hintArea);
+
+            currentNumbers = data.numbers.map((val, idx) => ({
+                value: val,
+                id: `n-${idx}`,
+                isUsed: false
+            }));
             
-            renderNumberRound();
+            const chipContainer = getOrCreateChipContainer();
+
+            // Sequential rendering of numbers
+            for (let i = 0; i < currentNumbers.length; i++) {
+                const chip = document.createElement('div');
+                chip.className = `chip`;
+                chip.innerText = currentNumbers[i].value;
+                chip.onclick = () => selectNumber(i);
+                chipContainer.appendChild(chip);
+                await sleep(numberShowDelay);
+            }
+
+            // Reveal target and start timer (timer code currently commented out)
+            targetDiv.style.display = "block";
+            
+            /*
+            // Timer start logic (commented out for debug phase)
+            startTimer(); 
+            */
 
         } else {
             const data = await Apiservice.fetchStartLetters(3);
