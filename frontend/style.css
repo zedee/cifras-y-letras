@@ -244,3 +244,8 @@ footer {
     background-color: #28a745;
     font-weight: bold;
 }
+
+#remove-calc-btn {
+    background-color: #c51316;
+    font-weight: bold;
+}

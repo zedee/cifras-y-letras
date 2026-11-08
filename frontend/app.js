@@ -17,7 +17,7 @@ let currentNumbers = []; // Array of objects: { value: number, id: string, isUse
 let selectedA = null;   // index in currentNumbers
 let selectedB = null;   // index in currentNumbers
 let selectedOp = null;  // "+", "-", "*", "/"
-let calculationHistory = [];
+let calculationHistory = []; // Array of { stepStr, valA, valB, valA_idx, valB_idx, result }
 
 // DOM Elements
 const scoreEl = document.getElementById('score');
@@ -35,7 +35,8 @@ const pauseBtn = document.getElementById('pause-btn');
 // New UI Elements
 const interactionUI = document.getElementById('number-interaction-ui');
 const historyEl = document.getElementById('calc-history');
-const addBtn = document.getElementById('add-calc-btn');
+const addCalcBtn = document.getElementById('add-calc-btn');
+const removeCalcBtn = document.getElementById('remove-calc-btn');
 const opBtns = document.querySelectorAll('.op-btn');
 
 function updateUI() {
@@ -116,7 +117,8 @@ opBtns.forEach(btn => {
     };
 });
 
-addBtn.onclick = () => {
+//Adds a calculation to history on the number challenge
+function addCalcToHistory() {
     if (selectedA === null || selectedB === null || selectedOp === null) {
         alert("Selecciona dos números y una operación.");
         return;
@@ -143,7 +145,15 @@ addBtn.onclick = () => {
     currentNumbers[selectedB].isUsed = true;
     
     const stepStr = `${valA} ${selectedOp} ${valB} = ${result}`;
-    calculationHistory.push(stepStr);
+    calculationHistory.push({
+        stepStr: stepStr,
+        valA: valA,
+        valB: valB,
+        valA_idx: selectedA,
+        valB_idx: selectedB,
+        result: result
+    });
+    
     historyEl.innerHTML += `<div class="history-item">${stepStr}</div>`;
     historyEl.scrollTop = historyEl.scrollHeight;
 
@@ -160,6 +170,28 @@ addBtn.onclick = () => {
     selectedOp = null;
     opBtns.forEach(b => b.classList.remove('active'));
     
+    renderNumberRound();
+};
+
+//Removes last calculation from history on the number challenge
+function removeCalcFromHistory() {
+    if (calculationHistory.length === 0) return;
+
+    const lastEntry = calculationHistory.pop();
+    
+    // Liberate the numbers used in that specific calculation
+    currentNumbers[lastEntry.valA_idx].isUsed = false;
+    currentNumbers[lastEntry.valB_idx].isUsed = false;
+    
+    // Remove the last chip (the result of the removed calculation)
+    currentNumbers.pop();
+    
+    // Update UI
+    const historyItems = historyEl.querySelectorAll('.history-item');
+    if (historyItems.length > 0) {
+        historyItems[historyItems.length - 1].remove();
+    }
+
     renderNumberRound();
 };
 
@@ -286,9 +318,8 @@ async function submitAnswer() {
     let finalValue = null;
     if (state.currentRound % 2 !== 0) {
         if (calculationHistory.length > 0) {
-            const lastStep = calculationHistory[calculationHistory.length - 1];
-            // Extract number after the "="
-            finalValue = parseInt(lastStep.split('=')[1].trim());
+            const lastEntry = calculationHistory[calculationHistory.length - 1];
+            finalValue = lastEntry.result;
         }
     } else {
         finalValue = userInputEl.value.trim();
@@ -359,6 +390,8 @@ pauseBtn.addEventListener('click', () => {
     state.isPaused = !state.isPaused;
     updateUI();
 });
+addCalcBtn.addEventListener('click', addCalcToHistory);
+removeCalcBtn.addEventListener('click', removeCalcFromHistory);
 
 // Initial Score Fetch
 fetchScore();
