@@ -87,6 +87,10 @@ def submit_letters(data: dict):
     
     return game_state["score_manager"].get_current_scores()
 
+@app.get("/reset-score")
+def reset_score():
+    return game_state["score_manager"].reset_score()
+
 # --- STATIC FILES ---
 # We mount the frontend folder to the root path.
 app.mount("/", StaticFiles(directory="frontend"), name="frontend")

@@ -55,6 +55,15 @@ async function loadInitialScore() {
     }
 }
 
+async function resetScore() {
+    const data = await Apiservice.resetScore();
+    if (data) {
+        state.score = data.main_score;
+        state.powerPoints = data.power_points;
+        updateUI();
+    }
+}
+
 function getOrCreateChipContainer() {
     let container = document.getElementById('number-chips-container');
     if (!container) {
@@ -181,6 +190,8 @@ function removeCalcFromHistory() {
 }
 
 async function startGame() {
+    resetScore();
+
     if (state.currentRound === 0) {
         state.currentRound = 1;
         state.timer = 40;

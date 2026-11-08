@@ -57,5 +57,15 @@ export const Apiservice = {
             console.error("Error submitting letters:", e);
             throw e;
         }
+    },
+
+    async resetScore() {
+        try {
+            const response = await fetch(`${API_BASE}/reset-score`);
+            return await response.json();
+        } catch (e) {
+            console.error("Error resetting score:", e);
+            throw e;
+        }
     }
 };

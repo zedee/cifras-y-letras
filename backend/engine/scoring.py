@@ -45,10 +45,15 @@ class ScoreManager:
             self.power_points += 100
         return self.power_points
 
-    def reset_for_endgame(self):
-        """Resets the power points for a new game session."""
+    def reset_score(self):
+        """Resets the all points for a new game session."""
+        self.score = 0
         self.power_points = 0
-        return self.power_points
+
+        return {
+            "main_score": self.score,
+            "power_points": self.power_points
+        }
 
     def get_current_scores(self) -> Dict[str, int]:
         return {
