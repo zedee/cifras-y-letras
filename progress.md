@@ -30,10 +30,15 @@
     - [x] Unified scoring module (Numbers, Letters, Duels, Power Points)
 
 ## Phase 4: Frontend & Integration
-- [ ] **Milestone 7: Solo Mode Frontend**
-    - [ ] Build HTML/CSS/JS interface.
-    - [x] Establish API connection (FastAPI structure).
-    - [ ] Connect frontend to Python Apiservice.
-    - [ ] Implement timers.
+- [x] **Milestone 7: Solo Mode Frontend**
+    - [x] Build HTML/CSS/JS interface.
+    - [x] Establish API connection.
+    - [x] Connect frontend to Python Apiservice.
+    - [x] Implement timers.
+    - [x] Implement auto-fill and anti-cheat for numbers round.
+    - [x] Implement feedback system and transition delay.
+    - [x] Hide/Show controls for the start screen.
 - [ ] **Milestone 8: Polishing & Documentation**
+    - [ ] Style and layout refinements (spacing, element arrangement).
+    - [ ] Fine-tune feedback messages for specific round outcomes.
     - [ ] Final testing and Docker deployment.

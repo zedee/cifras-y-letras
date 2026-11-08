@@ -5,7 +5,7 @@
 
 # --- Other temporary files --
 *.db
-agent-handover.md
+agent-handover*
 
 # --- Python ---
 __pycache__/

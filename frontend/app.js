@@ -32,6 +32,7 @@ const inputHintEl = document.getElementById('input-hint');
 const actionBtn = document.getElementById('action-btn');
 const startBtn = document.getElementById('start-game-btn');
 const pauseBtn = document.getElementById('pause-btn');
+const controlsContainer = document.getElementById('controls-container'); // New Reference
 
 // New UI Elements
 const interactionUI = document.getElementById('number-interaction-ui');
@@ -146,11 +147,10 @@ function addCalcToHistory() {
     });
 
     // --- ANTI-CHEAT & AUTOFILL ---
-    // If it's a numbers round, force the input field to show the result and be read-only
     if (state.currentRound % 2 !== 0) {
         userInputEl.value = result;
         userInputEl.readOnly = true;
-        userInputEl.style.backgroundColor = "#e9ecef"; // Visual cue it's read-only
+        userInputEl.style.backgroundColor = "#e9ecef"; 
         userInputEl.style.cursor = "not-allowed";
     }
 
@@ -272,6 +272,11 @@ async function startGame() {
         actionBtn.disabled = false;
         userInputEl.disabled = false;
         userInputEl.focus();
+        
+        // --- Show the controls now that the game has started and loaded ---
+        if (controlsContainer) {
+            controlsContainer.classList.remove('hidden');
+        }
     }
 }
 

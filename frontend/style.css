@@ -249,3 +249,8 @@ footer {
     background-color: #c51316;
     font-weight: bold;
 }
+
+/* Hides anything that has this class */
+.hidden {
+    display: none !important;
+}

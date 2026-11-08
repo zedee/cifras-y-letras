@@ -39,6 +39,7 @@
 
             <div id="game-display">
                 <div id="content-area"></div>
+
                 <!-- New containers for the interactive Number Round -->
                 <div id="number-interaction-ui" style="display: none;">
                     <div id="operator-selector" class="operator-group">
@@ -51,21 +52,20 @@
                     <button id="remove-calc-btn">Borrar último</button>
                     <div id="calc-history"></div>
                 </div>
-            </div>
 
-            <div class="controls">
-                <div class="input-group">
-                    <input type="text" id="user-input" placeholder="Tu respuesta..." disabled>
-                    <div id="input-hint" class="hint"></div>
+                <div class="controls hidden" id="controls-container">
+                    <div class="input-group">
+                        <input type="text" id="user-input" placeholder="Tu respuesta..." disabled>
+                        <div id="input-hint" class="hint"></div>
+                    </div>
+                    <button id="action-btn" disabled>Enviar</button>
                 </div>
-                <button id="action-btn" disabled>Enviar</button>
             </div>
         </main>
 
         <footer style="margin-top: 2rem; font-size: 0.7rem; color: #999;">
             Cifras y Letras - Solo Mode Engine
         </footer>
-
     </div>
 </body>
 </html>
