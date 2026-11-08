@@ -129,7 +129,7 @@ function addCalcToHistory() {
 
     switch (selectedOp) {
         case '+': result = valA + valB; break;
-        case '-': result = valA - valB; break;
+        case '-': result = Math.abs(valA - valB); break; // Fixed: Always positive difference
         case '*': result = valA * valB; break;
         case '/': result = valB !== 0 && valA % valB === 0 ? valA / valB : null; break;
     }
@@ -270,7 +270,7 @@ async function startGame() {
             
             const chipContainer = getOrCreateChipContainer();
 
-            // Sequential rendering of numbers
+            // Sequential rendering of numbers (TV Show style)
             for (let i = 0; i < currentNumbers.length; i++) {
                 const chip = document.createElement('div');
                 chip.className = `chip`;
