@@ -18,6 +18,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the entire project, including the 'data' folder (with your DB)
 COPY . .
 
+# Generate SQLite database
+RUN python /app/scripts/init_db.py
+
 # Expose the port FastAPI runs on
 EXPOSE 8000
 
