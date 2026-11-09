@@ -5,7 +5,7 @@ Una app web para ponerte a prueba y jugar tu misma a los juegos de palabras y n�
 1. [Preámbulo](#preámbulo)
 2. [Prerrequisitos](#prerrequisitos)
 3. [Instalación y uso en local](#instalación-y-uso-en-local-o-para-desarrollo)
-4. [Docker y "Containerización"](#docker-y-containerización-)
+4. [Docker y "Containerización"](#docker-y-containerización)
 5. [Descargo de responsabilidad](#disclaimer--descargo-de-responsabilidad)
 
 ## Preámbulo
