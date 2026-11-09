@@ -2,10 +2,10 @@
 Una app web para ponerte a prueba y jugar tu misma a los juegos de palabras y números de la misma manera que se hace en el concurso de televisión de RTVE "Cifras y Letras". Lo bueno, que puedes probar tantas veces como quieras. Lo malo, que no aparecen los maravillosos Aitor Albizua, ni David Calle ni Elena Herraiz, y dudo que acepten de ninguna manera tener sus "clones digitales" en este repo.
 
 ## Índice
-1. [Preámbulo](#preambulo)
+1. [Preámbulo](#preámbulo)
 2. [Prerrequisitos](#prerrequisitos)
-3. [Instalación y uso en local](#instalacion-y-uso-en-local-o-para-desarrollo)
-4. [Docker y "Containerización"](#docker-y--containerizacion-)
+3. [Instalación y uso en local](#instalación-y-uso-en-local-o-para-desarrollo)
+4. [Docker y "Containerización"](#docker-y-containerización-)
 5. [Descargo de responsabilidad](#disclaimer--descargo-de-responsabilidad)
 
 ## Preámbulo
