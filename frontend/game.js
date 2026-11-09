@@ -100,6 +100,7 @@ export function addCalculation() {
         value: result,
         id: Date.now().toString(),
         isUsed: false
+        // isOriginal is undefined/false here, so it goes to the bottom row automatically
     });
 
     if (state.currentRound % 2 !== 0) {
@@ -110,7 +111,7 @@ export function addCalculation() {
     selectedB = null;
     selectedOp = null;
     renderer.setOpBtnNone();
-    renderer.renderChips(currentNumbers, null, null);
+    renderer.renderChips(currentNumbers, null, null, true); // Force rebuild because list changed
 }
 
 export function removeCalculation() {
@@ -122,7 +123,7 @@ export function removeCalculation() {
     currentNumbers.pop();
     
     renderer.updateHistory(calculationHistory);
-    renderer.renderChips(currentNumbers, null, null);
+    renderer.renderChips(currentNumbers, null, null, true); // Force rebuild because list changed
 }
 
 export async function startGame() {
@@ -156,26 +157,32 @@ export async function startGame() {
                 "Usa los botones para realizar cálculos."
             );
             
-            const targetDiv = renderer.createTarget(data.target);
-            renderer.setTargetVisibility(targetDiv, false);
+            const targetNumberDiv = renderer.createTargetNumber(data.target);
+            renderer.setTargetVisibility(targetNumberDiv, false);
+            renderer.setTargetVisibility(document.getElementById('numbers-grid-wrapper'), true);            
             
             renderer.showHint(state.bestPathHint);
 
+            // FIX: Added isOriginal: true here
             currentNumbers = data.numbers.map((val, idx) => ({
                 value: val,
                 id: `n-${idx}`,
-                isUsed: false
+                isUsed: false,
+                isOriginal: true
             }));
             
             await renderer.animateNumbers(currentNumbers, numberShowDelay);
 
-            renderer.setTargetVisibility(targetDiv, true);
+            renderer.setTargetVisibility(targetNumberDiv, true);
             
             /*
             startTimer(); 
             */
 
         } else {
+            // Hide number grids
+            renderer.setTargetVisibility(document.getElementById('numbers-grid-wrapper'), false);
+
             // Handle Vowel Selection flow
             renderer.setRoundInfo(
                 "Ronda " + state.currentRound + ": Letras",

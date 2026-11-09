@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="style.css">
     <script type="module" src="app.js"></script>
 </head>
+
 <body>
     <div id="game-container">
         <header>
@@ -38,7 +40,16 @@
             </div>
 
             <div id="game-display">
+                <!-- We keep content-area for the Target, Loading, and Hints -->
                 <div id="content-area"></div>
+
+                <!-- New wrapper for the numbers, separated into two rows -->
+                <div id="numbers-grid-wrapper" class="hidden">
+                    <p>Números iniciales:</p>
+                    <div id="original-numbers-row"></div>
+                    <p>Números calculados:</p>
+                    <div id="calculated-numbers-row"></div>
+                </div>
 
                 <!-- New containers for the interactive Number Round -->
                 <div id="number-interaction-ui" style="display: none;">
@@ -57,7 +68,7 @@
                     <div class="input-group">
                         <input type="text" id="user-input" placeholder="Tu respuesta..." disabled>
                         <button id="action-btn" disabled>Enviar</button>
-                    </div>                    
+                    </div>
                     <div id="input-hint" class="hint"></div>
                 </div>
             </div>
@@ -68,4 +79,5 @@
         </footer>
     </div>
 </body>
+
 </html>

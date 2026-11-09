@@ -23,7 +23,7 @@ body {
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     width: 90%;
-    max-width: 600px;
+    max-width: 720px;
     text-align: center;
 }
 
@@ -266,6 +266,38 @@ footer {
 #remove-calc-btn {
     background-color: #c51316;
     font-weight: bold;
+}
+
+/* Chip zone - calculated numbers */
+/* New grid layout for numbers */
+#numbers-grid-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    width: 100%;
+    align-items: center;
+}
+
+#numbers-grid-wrapper p {
+    font-size: 0.7rem;
+    color: #999;
+    display: block;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    align-self: start;
+}
+
+#original-numbers-row, 
+#calculated-numbers-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 60px; /* Prevents jumping when empty */
+    padding: 10px;
+    border: 1px dashed #ddd; /* Optional: visual separation */
+    border-radius: 8px;
+    width: 100%;
 }
 
 /* Hides anything that has this class */

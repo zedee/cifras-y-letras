@@ -18,20 +18,16 @@ export const elements = {
     addCalcBtn: document.getElementById('add-calc-btn'),
     removeCalcBtn: document.getElementById('remove-calc-btn'),
     opBtns: document.querySelectorAll('.op-btn'),
-    chipContainer: null 
+    // New row elements
+    originalRow: document.getElementById('original-numbers-row'),
+    calculatedRow: document.getElementById('calculated-numbers-row')
 };
+
+// State to track when to rebuild the DOM
+let lastRenderedLength = 0;
 
 // Helper Functions
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-export function initChipContainer() {
-    if (!elements.chipContainer) {
-        elements.chipContainer = document.createElement('div');
-        elements.chipContainer.id = 'number-chips-container';
-        elements.contentArea.appendChild(elements.chipContainer);
-    }
-    return elements.chipContainer;
-}
 
 export function updateScore(score, powerPoints) {
     elements.score.innerText = score;
@@ -66,10 +62,12 @@ export function getInputValue() {
 export function clearContent() {
     elements.contentArea.innerHTML = "";
     elements.historyEl.innerHTML = "";
-    elements.chipContainer = null; 
+    elements.originalRow.innerHTML = "";
+    elements.calculatedRow.innerHTML = "";
+    lastRenderedLength = 0;
 }
 
-export function createTarget(target) {
+export function createTargetNumber(target) {
     const targetDiv = document.createElement('div');
     targetDiv.style.fontSize = "1.5rem";
     targetDiv.style.color = "#007bff";
@@ -80,7 +78,11 @@ export function createTarget(target) {
 }
 
 export function setTargetVisibility(targetDiv, isVisible) {
-    targetDiv.style.display = isVisible ? "block" : "none";
+    if (targetDiv.classList.contains('hidden')) {
+        return isVisible ? targetDiv.classList.remove('hidden') : false;
+    } else {
+        targetDiv.style.display = isVisible ? "block" : "none";
+    }
 }
 
 export function showHint(hintText) {
@@ -109,32 +111,61 @@ export function showHint(hintText) {
 }
 
 export async function animateNumbers(numbers, delay) {
-    const container = initChipContainer();
-    container.innerHTML = "";
+    elements.originalRow.innerHTML = "";
+    elements.calculatedRow.innerHTML = "";
+    
     for (let i = 0; i < numbers.length; i++) {
         const chip = document.createElement('div');
         chip.className = 'chip';
         chip.innerText = numbers[i].value;
         chip.onclick = () => window.handleChipClick(i);
-        container.appendChild(chip);
+        elements.originalRow.appendChild(chip);
         await sleep(delay);
     }
+    lastRenderedLength = numbers.length;
 }
 
-export function renderChips(numbers, selectedA, selectedB) {
-    const container = initChipContainer();
-    container.innerHTML = "";
-    elements.interactionUI.style.display = "block";
+/**
+ * Renders or updates the number chips.
+ * @param {Array} numbers - The current list of numbers
+ * @param {number|null} selectedA - Index of first selection
+ * @param {number|null} selectedB - Index of second selection
+ * @param {boolean} forceRebuild - If true, clears the rows and recreates chips
+ */
+export function renderChips(numbers, selectedA, selectedB, forceRebuild = false) {
+    // Rebuild if forced OR if the number of items has changed
+    if (forceRebuild || numbers.length !== lastRenderedLength || lastRenderedLength === 0) {
+        elements.originalRow.innerHTML = "";
+        elements.calculatedRow.innerHTML = "";
+        
+        numbers.forEach((num, index) => {
+            const chip = document.createElement('div');
+            chip.className = `chip ${num.isUsed ? 'used' : ''} ${selectedA === index ? 'selected' : ''} ${selectedB === index ? 'selected' : ''}`;
+            chip.innerText = num.value;
+            chip.onclick = () => {
+                window.handleChipClick(index);
+            };
+            
+            if (num.isOriginal) {
+                elements.originalRow.appendChild(chip);
+            } else {
+                elements.calculatedRow.appendChild(chip);
+            }
+        });
+        lastRenderedLength = numbers.length;
+    } else {
+        // If data hasn't changed, only update the visual "selected" classes
+        const allChips = [...elements.originalRow.children, ...elements.calculatedRow.children];
+        
+        allChips.forEach((chip, index) => {
+            chip.classList.remove('selected');
+            if (index === selectedA || index === selectedB) {
+                chip.classList.add('selected');
+            }
+        });
+    }
     
-    numbers.forEach((num, index) => {
-        const chip = document.createElement('div');
-        chip.className = `chip ${num.isUsed ? 'used' : ''} ${selectedA === index ? 'selected' : ''} ${selectedB === index ? 'selected' : ''}`;
-        chip.innerText = num.value;
-        chip.onclick = () => {
-            window.handleChipClick(index);
-        };
-        container.appendChild(chip);
-    });
+    elements.interactionUI.style.display = "block";
 }
 
 export function updateHistory(history) {
@@ -205,7 +236,6 @@ export function showVowelSelection() {
         btn.style.cursor = "pointer";
         btn.onclick = () => {
             const count = parseInt(btn.dataset.count);
-            // We'll call a global helper or handle via game.js
             window.onVowelSelected(count);
         };
     });
