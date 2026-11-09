@@ -20,21 +20,28 @@
 - [x] **Milestone 4: Letter Round Engine**
     - [x] Vowel/consonant selection logic.
     - [x] Word-finding algorithm (longest word from letters).
-    - [x] "Show possibilities" feature.
+    - [] "Show possibilities" feature.
+    - [x] Refined vowel weighting based on Spanish frequency.
+    - [x] Plural validation logic (Stem normalization: stripping 's' and 'es').
+    - [] Irregular plural validation logic.
+    - [] Check word is verb & verb conjugation check.
+- [x] **Milestone 4.1: Practice Mode**
+    - [x] Practice mode toggle (disables timers and round limits).
+    - [x] Round type selection (Numbers only, Letters only, Mixed).
 
 ## Phase 3: Advanced Rounds & Scoring
-- [x] **Milestone 5: Duel & Endgame Engines**
-    - [x] Duel types (Classic, One within the other, Spelling, Mental Arithmetic)
-    - [x] Endgame logic (8 selections, topic filtering, difficulty)
-- [x] **Milestone 6: Scoring System**
-    - [x] Unified scoring module (Numbers, Letters, Duels, Power Points)
+- [] **Milestone 5: Duel & Endgame Engines**
+    - [] Duel types (Classic, One within the other, Spelling, Mental Arithmetic)
+    - [] Endgame logic (8 selections, topic filtering, difficulty)
+- [] **Milestone 6: Scoring System**
+    - [] Unified scoring module (Numbers, Letters, Duels, Power Points)
 
 ## Phase 4: Frontend & Integration
 - [x] **Milestone 7: Solo Mode Frontend**
     - [x] Build HTML/CSS/JS interface.
     - [x] Establish API connection.
     - [x] Connect frontend to Python Apiservice.
-    - [x] Implement timers.
+    - [x] Implement timers (though disabled by now).
     - [x] Implement auto-fill and anti-cheat for numbers round.
     - [x] Implement feedback system and transition delay.
     - [x] Hide/Show controls for the start screen.

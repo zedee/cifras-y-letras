@@ -14,6 +14,23 @@
         <header>
             <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
                 <h1 style="margin: 0;">Cifras y Letras</h1>
+                
+                <!-- Practice Mode Section -->
+                <div id="practice-mode-settings" style="background: #f0f0f0; padding: 10px; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 10px;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                        <input type="checkbox" id="practice_mode_toggle">
+                        <label for="practice_mode_toggle" style="font-weight: bold;">Modo Práctica</label>
+                    </div>
+                    <div style="font-size: 0.8rem;">
+                        <label for="round_type_select">Tipo de ronda:</label>
+                        <select id="round_type_select" style="padding: 2px;">
+                            <option value="both">Mixtas (Normal)</option>
+                            <option value="numbers">Solo Números</option>
+                            <option value="letters">Solo Letras</option>
+                        </select>
+                    </div>
+                </div>
+
                 <button id="start-game-btn">Empezar / Reiniciar</button>
                 <button id="pause-btn">Pausa</button>
             </div>

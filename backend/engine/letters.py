@@ -14,7 +14,7 @@ class LetterEngine:
         Generates a set of letters based on the number of vowels requested 
         using weighted distribution for Spanish frequency.
         """
-        # Vowel weights based on specific percentages provided:
+        # Vowel weights based on provided Spanish frequency percentages:
         # A(12.53), E(13.68), I(6.25), O(8.68), U(3.93)
         vowel_options = ['A', 'E', 'I', 'O', 'U']
         vowel_weights = [12.53, 13.68, 6.25, 8.68, 3.93]
@@ -91,6 +91,8 @@ class LetterEngine:
         1. Minimum length of 5.
         2. Exists in the dictionary OR its singular stem exists.
         3. Can be formed using the available letters.
+        Includes robust handling for Spanish plurals (s, es, y->i transition) 
+        and specific linguistic exceptions.
         """
         word = word.lower().strip()
         
@@ -100,58 +102,109 @@ class LetterEngine:
         conn = self._get_db_connection()
         cursor = conn.cursor()
         
-        # Check 1: Is the word exactly in the dictionary?
-        cursor.execute("SELECT word FROM words WHERE word LIKE ?", (f"{word}%",))
-        rows = cursor.fetchall()
-        
+        # 1. Exact match (Dictionary check)
         is_valid_entry = False
-        for (row_word,) in rows:
+        cursor.execute("SELECT word FROM words WHERE word LIKE ?", (f"{word}%",))
+        for (row_word,) in cursor.fetchall():
             row_word_lower = row_word.lower()
-            # Check exact match
-            if row_word_lower == word:
-                is_valid_entry = True
-                break
-            # Check comma logic (e.g. "cinemático, ca")
-            if "," in row_word and row_word_lower.split(",")[0] == word:
+            if row_word_lower == word or ("," in row_word and row_word_lower.split(",")[0] == word):
                 is_valid_entry = True
                 break
         
-        conn.close()
+        if is_valid_entry:
+            conn.close()
+            # Skip to letter pool check
+            return self._check_letter_pool(word, available_letters)
 
-        # Check 2: If not found, is it a plural of a word in the dictionary?
-        if not is_valid_entry:
-            # Try stripping 's'
-            if word.endswith('s'):
-                base_s = word[:-1]
-                cursor.execute("SELECT word FROM words WHERE word LIKE ?", (f"{base_s}%",))
+        # 2. Irregular Plurals & Exceptions (from RAE analysis)
+        irregular_plurals = {
+            "pies": "pie",
+            "doses": "dos",
+            "treses": "tres",
+            "seises": "seis",
+            "dieces": "diez",
+            "noes": "no",
+            "síes": "sí",
+            "yoes": "yo",
+            "cus": "q",
+            "kas": "k",
+            "mambises": "mambí",
+            "faralaes": "faralá",
+            "albalaes": "albalá",
+            "gurises": "gurí",
+            "lápices": "lápiz",
+            "luces": "luz",
+            "especímenes": "espécimen",
+            "regímenes": "régimen"
+        }
+        
+        base_irreg = irregular_plurals.get(word)
+        if base_irreg:
+            cursor.execute("SELECT word FROM words WHERE word LIKE ?", (f"{base_irreg}%",))
+            for (r_word,) in cursor.fetchall():
+                r_word_lower = r_word.lower()
+                if r_word_lower == base_irreg or ("," in r_word and r_word_lower.split(",")[0] == base_irreg):
+                    is_valid_entry = True
+                    break
+
+        # 3. "y -> i" Transition (e.g., "gais" -> "gay", "espráis" -> "espray")
+        if not is_valid_entry and word.endswith('is'):
+            # Check if removing 'is' and adding 'y' makes a valid word
+            base_is = word[:-2]
+            if base_is.endswith('y'):
+                candidate = base_is + 'y'
+                cursor.execute("SELECT word FROM words WHERE word LIKE ?", (f"{candidate}%",))
                 if cursor.fetchone():
                     is_valid_entry = True
-                else:
-                    cursor.execute("SELECT word FROM words WHERE word LIKE ?", (f"{base_s}%",))
-                    # Double check if it was a comma-separated entry
-                    for (r_word,) in cursor.fetchall():
-                        if r_word.lower().split(",")[0] == base_s:
-                            is_valid_entry = True
-                            break
-            
-            # If still not found, try stripping 'es'
-            if not is_valid_entry and word.endswith('es'):
+
+        # 4. General Plural Stripping (-es and -s)
+        if not is_valid_entry:
+            # Check -es first
+            if word.endswith('es'):
                 base_es = word[:-2]
                 cursor.execute("SELECT word FROM words WHERE word LIKE ?", (f"{base_es}%",))
-                if cursor.fetchone():
-                    is_valid_entry = True
-                else:
-                    cursor.execute("SELECT word FROM words WHERE word LIKE ?", (f"{base_es}%",))
-                    for (r_word,) in cursor.fetchall():
-                        if r_word.lower().split(",")[0] == base_es:
-                            is_valid_entry = True
-                            break
-            conn.close()
+                for (r_word,) in cursor.fetchall():
+                    r_word_lower = r_word.lower()
+                    if r_word_lower == base_es or ("," in r_word and r_word_lower.split(",")[0] == base_es):
+                        is_valid_entry = True
+                        break
+            
+            # Check -s
+            if not is_valid_entry and word.endswith('s'):
+                base_s = word[:-1]
+                cursor.execute("SELECT word FROM words WHERE word LIKE ?", (f"{base_s}%",))
+                for (r_word,) in cursor.fetchall():
+                    r_word_lower = r_word.lower()
+                    if r_word_lower == base_s or ("," in r_word and r_word_lower.split(",")[0] == base_s):
+                        is_valid_entry = True
+                        break
+        
+        conn.close()
 
         if not is_valid_entry:
             return False
             
-        # Check 3: Letter Pool verification
+        # 5. Final Letter Pool Verification
+        return self._check_letter_pool(word, available_letters)
+
+    def _check_letter_pool(self, word: str, available_letters: List[str]) -> bool:
+        """Helper method to verify if word can be formed with available letters."""
+        letter_pool = {}
+        for char in available_letters:
+            upper_char = char.upper()
+            letter_pool[upper_char] = letter_pool.get(upper_char, 0) + 1
+
+        current_word_counts = {}
+        for char in word:
+            upper_char = char.upper()
+            current_word_counts[upper_char] = current_word_counts.get(upper_char, 0) + 1
+            if current_word_counts[upper_char] > letter_pool.get(upper_char, 0):
+                return False
+        
+        return True
+
+    def _check_letter_pool(self, word: str, available_letters: List[str]) -> bool:
+        """Helper method to verify if word can be formed with available letters."""
         letter_pool = {}
         for char in available_letters:
             upper_char = char.upper()

@@ -7,6 +7,7 @@ export const state = {
     score: 0,
     powerPoints: 0,
     currentRound: 0,
+    currentRoundType: "numbers", // NEW: Explicitly track the type
     timer: 0,
     timerInterval: null,
     isLoading: false,
@@ -103,7 +104,7 @@ export function addCalculation() {
         // isOriginal is undefined/false here, so it goes to the bottom row automatically
     });
 
-    if (state.currentRound % 2 !== 0) {
+    if (state.currentRoundType === "numbers") {
         renderer.setInput(result, true, "#e9ecef", "not-allowed");
     }
 
@@ -129,6 +130,10 @@ export function removeCalculation() {
 export async function startGame() {
     await resetScore();
 
+    // Capture Practice Mode settings from UI
+    state.practice_mode = document.getElementById('practice_mode_toggle').checked;
+    state.preferred_round_type = document.getElementById('round_type_select').value;
+
     if (state.currentRound === 0) {
         state.currentRound = 1;
         state.timer = 40;
@@ -146,7 +151,18 @@ export async function startGame() {
     selectedOp = null;
     
     try {
-        if (state.currentRound % 2 !== 0) {
+        // Determine next round type
+        let nextRoundType = "";
+        if (state.practice_mode) {
+            if (state.preferred_round_type === "numbers") nextRoundType = "numbers";
+            else if (state.preferred_round_type === "letters") nextRoundType = "letters";
+            else nextRoundType = "both";
+        } else {
+            nextRoundType = (state.currentRound % 2 !== 0) ? "numbers" : "letters";
+        }
+
+        if (nextRoundType === "numbers") {
+            state.currentRoundType = "numbers"; // UPDATE STATE
             const data = await Apiservice.fetchStartNumbers();
             state.currentData = data;
             state.bestPathHint = data.best_path ? data.best_path.join(' + ') : "No hint available";
@@ -175,11 +191,12 @@ export async function startGame() {
 
             renderer.setTargetVisibility(targetNumberDiv, true);
             
-            /*
-            startTimer(); 
-            */
+            if (!state.practice_mode) {
+                // startTimer(); 
+            }
 
         } else {
+            state.currentRoundType = "letters"; // UPDATE STATE
             // Hide number grids
             renderer.setTargetVisibility(document.getElementById('numbers-grid-wrapper'), false);
 
@@ -211,7 +228,7 @@ window.onVowelSelected = async (vowelCount) => {
         "Forma la palabra más larga con estas letras.",
         "Escribe la palabra más larga que puedas formar."
     );
-
+    
     try {
         const data = await Apiservice.fetchStartLetters(vowelCount);
         state.currentData = data;
@@ -226,7 +243,9 @@ window.onVowelSelected = async (vowelCount) => {
 
 export async function submitAnswer() {
     let finalValue = null;
-    if (state.currentRound % 2 !== 0) {
+    
+    // USE currentRoundType INSTEAD OF % 2
+    if (state.currentRoundType === "numbers") {
         if (calculationHistory.length > 0) {
             finalValue = calculationHistory[calculationHistory.length - 1].result;
         }
@@ -243,7 +262,7 @@ export async function submitAnswer() {
 
     try {
         let scoreData;
-        if (state.currentRound % 2 !== 0) {
+        if (state.currentRoundType === "numbers") {
             scoreData = await Apiservice.submitNumbers({
                 user_value: finalValue,
                 target: state.currentData?.target,
@@ -261,7 +280,7 @@ export async function submitAnswer() {
         renderer.updateScore(state.score, state.powerPoints);
 
         let feedbackMsg = "";
-        if (state.currentRound % 2 !== 0) {
+        if (state.currentRoundType === "numbers") {
             const target = state.currentData?.target;
             const diff = Math.abs(target - finalValue);
             if (diff === 0) feedbackMsg = "¡Exacto! ¡Increíble!";
@@ -275,20 +294,27 @@ export async function submitAnswer() {
 
         setTimeout(() => {
             renderer.setInput("", false);
-            if (state.currentRound % 2 !== 0) {
+            if (state.currentRoundType === "numbers") {
                 renderer.setInput("", false, "", "default");
             }
 
-            state.currentRound++;
-            
-            if (state.currentRound > 6) {
-                alert("¡Juego Terminado!");
-                location.reload();
-            } else {
+            if (state.practice_mode) {
+                state.currentRound++;
                 renderer.setRoundInfo("Ronda " + state.currentRound, "Cargando...", "");
                 setTimeout(() => {
                     startGame(); 
                 }, 1000);
+            } else {
+                if (state.currentRound > 6) {
+                    alert("¡Juego Terminado!");
+                    location.reload();
+                } else {
+                    state.currentRound++;
+                    renderer.setRoundInfo("Ronda " + state.currentRound, "Cargando...", "");
+                    setTimeout(() => {
+                        startGame(); 
+                    }, 1000);
+                }
             }
         }, 2500);
 
