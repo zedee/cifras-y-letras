@@ -13,6 +13,7 @@ class LetterEngine:
         """
         Generates a set of letters based on the number of vowels requested 
         using weighted distribution for Spanish frequency.
+        The total number of letters (vowels + consonants) will always be 10.
         """
         # Vowel weights based on provided Spanish frequency percentages:
         # A(12.53), E(13.68), I(6.25), O(8.68), U(3.93)
@@ -29,16 +30,14 @@ class LetterEngine:
             ('J', 1), ('Q', 1), ('X', 1), ('Z', 1), ('K', 1), ('W', 1), ('Ñ', 1) # Low
         ]
         
-        # Calculate a balanced number of consonants. 
-        # A common ratio for Spanish is roughly 1.6 consonants for every vowel.
-        consonant_count = int(vowel_count * 1.6)
-        # Ensure at least some consonants are provided
-        consonant_count = max(consonant_count, 4)
+        # Calculate the number of consonants needed to reach exactly 10 letters
+        consonant_count = 10 - vowel_count
 
         population_consonants = []
         for char, weight in consonant_data:
             population_consonants.extend([char] * weight)
 
+        # Select the required number of consonants
         selected_consonants = random.sample(population_consonants, consonant_count)
 
         # Combine and shuffle to ensure interleaving
@@ -186,22 +185,6 @@ class LetterEngine:
             
         # 5. Final Letter Pool Verification
         return self._check_letter_pool(word, available_letters)
-
-    def _check_letter_pool(self, word: str, available_letters: List[str]) -> bool:
-        """Helper method to verify if word can be formed with available letters."""
-        letter_pool = {}
-        for char in available_letters:
-            upper_char = char.upper()
-            letter_pool[upper_char] = letter_pool.get(upper_char, 0) + 1
-
-        current_word_counts = {}
-        for char in word:
-            upper_char = char.upper()
-            current_word_counts[upper_char] = current_word_counts.get(upper_char, 0) + 1
-            if current_word_counts[upper_char] > letter_pool.get(upper_char, 0):
-                return False
-        
-        return True
 
     def _check_letter_pool(self, word: str, available_letters: List[str]) -> bool:
         """Helper method to verify if word can be formed with available letters."""
