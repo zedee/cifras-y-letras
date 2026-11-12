@@ -86,3 +86,50 @@ def test_get_suggested_words(mock_connect, engine):
     # Check that they have the correct lengths
     lengths = [len(s) for s in suggestions]
     assert sorted(lengths) == [6, 7, 8, 9, 10]
+
+@patch('sqlite3.connect')
+def test_validate_word_plurals(mock_connect, engine):
+    """Test plural validation logic including the new 'z' to 'ces' rule."""
+    mock_conn = MagicMock()
+    mock_cursor = mock_conn.cursor.return_value
+    mock_connect.return_value = mock_conn
+
+    # Side effect to simulate proper DB behavior:
+    # Note: We check params[0] because the logic uses execute("... LIKE ?", (f"{word}%",))
+    def side_effect(query, params=None):
+        if not params:
+            mock_cursor.fetchall.return_value = []
+            return
+        
+        val = params[0]
+        if "flores%" in val:
+            mock_cursor.fetchall.return_value = []
+        elif "flor%" in val:
+            mock_cursor.fetchall.return_value = [("flor",)]
+        elif "luces%" in val:
+            mock_cursor.fetchall.return_value = []
+        elif "luz%" in val:
+            mock_cursor.fetchall.return_value = [("luz",)]
+        elif "paces%" in val:
+            mock_cursor.fetchall.return_value = []
+        elif "paz%" in val:
+            mock_cursor.fetchall.return_value = [("paz",)]
+        else:
+            mock_cursor.fetchall.return_value = []
+
+    mock_cursor.execute.side_effect = side_effect
+
+    # Test standard -es stripping (flores -> flor)
+    # Should be valid because "flor" is found during stripping
+    assert engine.validate_word("flores", ["f", "l", "o", "r", "e", "s"]) is True
+    
+    # Test z -> ces (luces -> luz)
+    # Should be valid because "luz" is found after stripping "es" and changing "c" to "z"
+    assert engine.validate_word("luces", ["l", "u", "c", "e", "s"]) is True
+    
+    # Test z -> ces (paces -> paz)
+    assert engine.validate_word("paces", ["p", "a", "c", "e", "s"]) is True
+
+    # Negative case: word not in dictionary
+    mock_cursor.fetchall.return_value = []
+    assert engine.validate_word("inventos", ["i", "n", "v", "e", "n", "t", "o", "s"]) is False
