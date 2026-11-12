@@ -193,12 +193,24 @@ class LetterEngine:
             # Check -es first
             if word.endswith('es'):
                 base_es = word[:-2]
+                # Standard -es stripping (e.g., "flores" -> "flor")
                 cursor.execute("SELECT word FROM words WHERE word LIKE ?", (f"{base_es}%",))
                 for (r_word,) in cursor.fetchall():
                     r_word_lower = r_word.lower()
                     if r_word_lower == base_es or ("," in r_word and r_word_lower.split(",")[0] == base_es):
                         is_valid_entry = True
                         break
+                
+                # "z" -> "ces" rule: if base_es ends in 'c', check if replacing 'c' with 'z' is a word
+                # This handles cases like "luces" -> "luc" -> "luz"
+                if not is_valid_entry and base_es.endswith('c'):
+                    base_z = base_es[:-1] + 'z'
+                    cursor.execute("SELECT word FROM words WHERE word LIKE ?", (f"{base_z}%",))
+                    for (r_word,) in cursor.fetchall():
+                        r_word_lower = r_word.lower()
+                        if r_word_lower == base_z or ("," in r_word and r_word_lower.split(",")[0] == base_z):
+                            is_valid_entry = True
+                            break
             
             # Check -s
             if not is_valid_entry and word.endswith('s'):

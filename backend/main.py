@@ -81,10 +81,8 @@ def submit_letters(data: dict):
     
     is_valid = let_engine.validate_word(word, letters)
     
-    # Get suggested words only if valid
-    suggestions = []
-    if is_valid:
-        suggestions = let_engine.get_suggested_words(letters)
+    # Always get suggestions regardless of whether the word is valid
+    suggestions = let_engine.get_suggested_words(letters)
     
     # Add score (1 point per letter if valid, otherwise 0)
     score_to_add = len(word) if is_valid else 0

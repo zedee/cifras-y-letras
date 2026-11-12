@@ -227,6 +227,62 @@ export function setContentText(text, fontSize, color) {
     elements.contentArea.style.color = color;
 }
 
+/**
+ * Renders letters as individual spans inside a wrapper to allow for dimming effects.
+ */
+export function renderLetters(letters) {
+    elements.contentArea.innerHTML = ""; // Clear previous content
+    const wrapper = document.createElement('div');
+    wrapper.id = "letters-pool-wrapper";
+    wrapper.style.display = "flex";
+    wrapper.style.flexWrap = "wrap";
+    wrapper.style.gap = "10px";
+    wrapper.style.justifyContent = "center";
+    wrapper.style.marginTop = "20px";
+
+    letters.forEach(char => {
+        const span = document.createElement('span');
+        span.innerText = char;
+        span.style.fontSize = "2.5rem";
+        span.style.color = "#333";
+        span.style.fontWeight = "bold";
+        span.className = "letter-chip";
+        span.dataset.char = char;
+        wrapper.appendChild(span);
+    });
+
+    elements.contentArea.appendChild(wrapper);
+}
+
+/**
+ * Dims letters in the pool that have been used in the current input.
+ * Handles multiple letters and both typing/deleting correctly.
+ * @param {string} inputValue - The current text in the input field.
+ */
+export function dimLetters(inputValue) {
+    const spans = elements.contentArea.querySelectorAll('.letter-chip');
+    
+    // Create a frequency map of letters used in the input
+    const charCounts = {};
+    for (const char of inputValue) {
+        charCounts[char] = (charCounts[char] || 0) + 1;
+    }
+
+    // Reset all chips to original color
+    spans.forEach(span => {
+        span.style.color = "#333";
+    });
+
+    // Dim chips that match the input frequency
+    spans.forEach(span => {
+        const char = span.dataset.char;
+        if (charCounts[char] > 0) {
+            span.style.color = "#ccc"; // Clear grey
+            charCounts[char]--;
+        }
+    });
+}
+
 export function showVowelSelection() {
     elements.contentArea.innerHTML = `
         <div style="text-align: center; padding: 20px;">

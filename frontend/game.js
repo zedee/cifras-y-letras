@@ -233,8 +233,18 @@ window.onVowelSelected = async (vowelCount) => {
         const data = await Apiservice.fetchStartLetters(vowelCount);
         state.currentData = data;
         
-        renderer.setContentText(data.letters.join(' '), "2.5rem", "#333");
+        // NEW: Use renderLetters instead of setContentText
+        renderer.renderLetters(data.letters);
         renderer.setInteractionUIVisibility(false);
+
+        // NEW: Add real-time dimming logic
+        const inputEl = document.getElementById('user-input');
+        if (inputEl) {
+            inputEl.addEventListener('input', (e) => {
+                renderer.dimLetters(e.target.value);
+            });
+        }
+
     } catch (e) {
         console.error(e);
         renderer.setLoading(false, "Error al generar letras. Reintenta.");
