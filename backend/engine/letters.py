@@ -48,8 +48,8 @@ class LetterEngine:
 
     def find_longest_word(self, available_letters: List[str]) -> Tuple[Optional[str], int]:
         """
-        Finds the longest valid word from the dictionary that can be 
-        formed using the available letters.
+        Finds the longest valid word from the dictionary (between 5 and 10 letters)
+        that can be formed using the available letters.
         """
         letter_pool = {}
         for char in available_letters:
@@ -61,7 +61,8 @@ class LetterEngine:
 
         conn = self._get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT word FROM words")
+        # Optimization: Only fetch words within the valid game range
+        cursor.execute("SELECT word FROM words WHERE length(word) BETWEEN 5 AND 10")
         rows = cursor.fetchall()
         conn.close()
 
@@ -83,6 +84,37 @@ class LetterEngine:
                     longest_word = word
         
         return longest_word, max_length
+
+    def get_suggested_words(self, available_letters: List[str]) -> List[str]:
+        """
+        Returns a list of words of different lengths (10, 9, 8, 7, 6) 
+        that can be formed with the available letters.
+        Returns the first match found for each length.
+        """
+        conn = self._get_db_connection()
+        cursor = conn.cursor()
+        # Fetch all words in the relevant range
+        cursor.execute("SELECT word FROM words WHERE length(word) BETWEEN 6 AND 10")
+        rows = cursor.fetchall()
+        conn.close()
+
+        suggested_words = []
+        target_lengths = [10, 9, 8, 7, 6]
+        found_lengths = set()
+
+        for (word,) in rows:
+            word_clean = word.lower()
+            length = len(word_clean)
+            
+            if length in target_lengths and length not in found_lengths:
+                if self._check_letter_pool(word_clean, available_letters):
+                    suggested_words.append(word)
+                    found_lengths.add(length)
+                    # Stop if we found one for every requested length
+                    if len(suggested_words) == len(target_lengths):
+                        break
+        
+        return suggested_words
 
     def validate_word(self, word: str, available_letters: List[str]) -> bool:
         """
