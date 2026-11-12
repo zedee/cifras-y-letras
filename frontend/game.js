@@ -290,7 +290,8 @@ export async function submitAnswer() {
             feedbackMsg = `¡Buen intento! Has ganado ${state.score - oldScore} puntos.`;
         }
 
-        renderer.showFeedback(feedbackMsg, state.score);
+        // Pass suggestions to the renderer if they exist
+        renderer.showFeedback(feedbackMsg, state.score, scoreData.suggestions || []);
 
         setTimeout(() => {
             renderer.setInput("", false);

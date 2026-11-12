@@ -179,11 +179,22 @@ export function updateHistory(history) {
     elements.historyEl.scrollTop = elements.historyEl.scrollHeight;
 }
 
-export function showFeedback(message, score) {
+export function showFeedback(message, score, suggestions = []) {
+    let suggestionsHtml = "";
+    if (suggestions.length > 0) {
+        suggestionsHtml = `
+            <div style="margin-top: 20px; text-align: left; display: inline-block;">
+                <h4 style="margin-bottom: 5px; color: #555;">Sugerencias:</h4>
+                <p style="margin: 0; font-style: italic; color: #666;">${suggestions.join(', ')}</p>
+            </div>
+        `;
+    }
+
     elements.contentArea.innerHTML = `
         <div style="text-align: center; padding: 20px;">
             <h2 style="color: #28a745;">${message}</h2>
             <p>Puntos actuales: ${score}</p>
+            ${suggestionsHtml}
         </div>
     `;
 }

@@ -81,11 +81,20 @@ def submit_letters(data: dict):
     
     is_valid = let_engine.validate_word(word, letters)
     
+    # Get suggested words only if valid
+    suggestions = []
+    if is_valid:
+        suggestions = let_engine.get_suggested_words(letters)
+    
     # Add score (1 point per letter if valid, otherwise 0)
     score_to_add = len(word) if is_valid else 0
     game_state["score_manager"].add_letter_round_score(score_to_add)
     
-    return game_state["score_manager"].get_current_scores()
+    scores = game_state["score_manager"].get_current_scores()
+    return {
+        **scores,
+        "suggestions": suggestions
+    }
 
 @app.get("/reset-score")
 def reset_score():
