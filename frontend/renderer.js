@@ -183,7 +183,7 @@ export function showFeedback(message, score, suggestions = []) {
     let suggestionsHtml = "";
     if (suggestions.length > 0) {
         suggestionsHtml = `
-            <div style="margin-top: 20px; text-align: left; display: inline-block;">
+            <div class="word-suggestions">
                 <h4 style="margin-bottom: 5px; color: #555;">Sugerencias:</h4>
                 <p style="margin: 0; font-style: italic; color: #666;">${suggestions.join(', ')}</p>
             </div>
@@ -192,7 +192,7 @@ export function showFeedback(message, score, suggestions = []) {
 
     elements.contentArea.innerHTML = `
         <div style="text-align: center; padding: 20px;">
-            <h2 style="color: #28a745;">${message}</h2>
+            <h2 class="feedback-message">${message}</h2>
             <p>Puntos actuales: ${score}</p>
             ${suggestionsHtml}
         </div>
@@ -238,7 +238,6 @@ export function renderLetters(letters) {
     wrapper.style.flexWrap = "wrap";
     wrapper.style.gap = "10px";
     wrapper.style.justifyContent = "center";
-    wrapper.style.marginTop = "20px";
 
     letters.forEach(char => {
         const span = document.createElement('span');
@@ -261,10 +260,11 @@ export function renderLetters(letters) {
  */
 export function dimLetters(inputValue) {
     const spans = elements.contentArea.querySelectorAll('.letter-chip');
+    const inputValueToUpper = inputValue.toUpperCase();
     
     // Create a frequency map of letters used in the input
     const charCounts = {};
-    for (const char of inputValue) {
+    for (const char of inputValueToUpper) {
         charCounts[char] = (charCounts[char] || 0) + 1;
     }
 
